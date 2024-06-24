@@ -7,9 +7,9 @@ function App() {
   function handleSubmit(event) {
     event.preventDefault();
     const name = event.target.elements.name.value;
-    ICP_backend.greet(name).then((greeting) => {
-      setGreeting(greeting);
-    });
+    // ICP_backend.greet(name).then((greeting) => {
+    //   setGreeting(greeting);
+    // });
     return false;
   }
 

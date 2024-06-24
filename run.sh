@@ -1,0 +1,1 @@
+dfx build ICP_frontend && dfx canister install ICP_frontend --mode upgrade

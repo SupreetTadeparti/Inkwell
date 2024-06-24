@@ -1,0 +1,27 @@
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 80%;
+    margin: auto;
+    padding: 1.5em 0;
+    font-size: 1.1em;
+}
+
+.navbar-brand {
+    color: var(--text);
+    margin: 0;
+}
+
+.navbar-links>* {
+    cursor: pointer;
+    color: var(--text);
+    text-decoration: none;
+    font-size: 1.25em;
+    padding: 0.25em 0;
+    transition: transform 50ms ease-out;
+}
+
+.navbar-links>*:hover {
+    transform: scale(1.05);
+}
