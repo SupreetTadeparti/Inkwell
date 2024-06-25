@@ -1,5 +1,8 @@
 html {
-  scroll-behavior: smooth;
+  /* Causes Lag in the Parallax Background
+  : */
+  /* scroll-behavior: smooth; */
+  overflow-x: hidden;
 }
 
 body {
@@ -28,26 +31,39 @@ body {
 
 .note-text {
   text-align: center;
-  font-size: 5em;
+  font-size: 4.5em;
   line-height: 1.1;
   font-weight: 500;
   display: inline-block;
-  white-space: nowrap; 
-  overflow: hidden; 
-  border-right: 0.15em solid black; 
-  animation: typing 3s steps(40, end) forwards, blink-caret 0.75s step-end 3s;
-  width: 0; 
+  white-space: nowrap;
+  overflow: hidden;
+  color: white;
+  /* animation: typing 3s steps(40, end) forwards, blink-caret 0.5s step-end 3s;
+  width: 0; */
 }
 
+/* 
 @keyframes typing {
-  from { width: 0; }
-  to { width: 30ch; } 
+  from {
+    width: 0;
+  }
+
+  to {
+    width: 22ch;
+  }
 }
 
 @keyframes blink-caret {
-  from, to { border-color: transparent; }
-  50% { border-color: black; }
-}
+
+  from,
+  to {
+    border-color: transparent;
+  }
+
+  50% {
+    border-color: black;
+  }
+} */
 
 
 .background {
@@ -65,24 +81,13 @@ body {
   object-fit: fill;
 }
 
-
-footer {
-  margin: 0 auto;
-  width: 80%;
-  background-color: rgb(255, 255, 255, 0.5);
-  color: black;
-  padding: 10px;
-  display: flex;
-  justify-content: space-between;
-}
-
-.organize-section {
+.content-section {
+  width: 100%;
   position: relative;
   display: flex;
-  flex-direction: row;
   justify-content: space-evenly;
-  width: 100%;
-  padding-top: 15em;
+  gap: .5em;
+  padding-top: 10em;
 }
 
 .four-notes {
@@ -93,6 +98,7 @@ footer {
   height: 20em;
   place-items: center;
   gap: 1.2em;
+  padding: 2.5em 4em;
 }
 
 .note {
@@ -105,32 +111,23 @@ footer {
 }
 
 .note:hover {
-  transform: scale(1.15);
+  transform: scale(1.1);
 }
 
 .note:nth-child(1) {
-  background-color: #F24822;
+  background-image: linear-gradient(hsl(0, 60%, 50%), hsl(0, 60%, 60%));
 }
 
 .note:nth-child(2) {
-  background-color: #FFCD29;
+  background-image: linear-gradient(hsl(217, 63%, 50%), hsl(217, 63%, 60%));
 }
 
 .note:nth-child(3) {
-  background-color: #0D99FF;
+  background-image: linear-gradient(hsl(42, 100%, 50%), hsl(42, 100%, 70%));
 }
 
 .note:nth-child(4) {
-  background-color: #14AE5C;
-}
-
-.colors-section {
-  position: relative;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-evenly;
-  width: 100%;
-  padding: 15em 0;
+  background-image: linear-gradient(hsl(87, 54%, 50%), hsl(87, 54%, 65%));
 }
 
 .colors-box {
@@ -144,9 +141,9 @@ footer {
   padding-top: 3em;
 }
 
-.colors-image-box {
-  width: 30em;
-  height: 20em;
+.security-image {
+  display: flex;
+  align-items: center;
 }
 
 .colors-text {
@@ -194,3 +191,24 @@ footer {
   top: 80%;
   left: 80%;
 } */
+
+
+footer {
+  margin: 0 auto;
+  width: 80%;
+  background-color: rgb(255, 255, 255, 0.5);
+  color: black;
+  margin-top: 10em;
+  padding: 1em;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: white;
+  font-family: Inconsolata;
+  font-size: 1.05em;
+}
+
+.contact {
+  display: flex;
+  flex-direction: column;
+}

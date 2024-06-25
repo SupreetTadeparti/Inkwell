@@ -14,11 +14,15 @@
     "@dfinity/agent": "^0.15.7",
     "@dfinity/candid": "^0.15.7",
     "@dfinity/principal": "^0.15.7",
+    "@tsparticles/react": "^3.0.0",
     "react": "^18.2.0",
+    "react-cookie": "^7.1.4",
     "react-dom": "^18.2.0",
     "react-parallax-tilt": "^1.7.229",
     "react-router-dom": "^6.23.1",
-    "react-scroll-parallax": "^3.4.5"
+    "react-scroll-parallax": "^3.4.5",
+    "react-type-animation": "^3.2.0",
+    "tsparticles": "^3.4.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.14",

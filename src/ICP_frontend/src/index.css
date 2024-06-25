@@ -9,5 +9,5 @@
     border-radius: 10px;
     border: solid 1px white;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-    backdrop-filter: blur(5px);
+    backdrop-filter: blur(8px);
 }

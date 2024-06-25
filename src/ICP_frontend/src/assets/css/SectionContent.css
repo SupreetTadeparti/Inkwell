@@ -1,5 +1,10 @@
+.section-content-container {
+    width: 50%;
+}
+
 .section-content {
-    width: 30em;
+    margin-left: auto;
+    width: 75%;
     height: 20em;
     position: relative;
     z-index: 1;

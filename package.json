@@ -14,5 +14,9 @@
   "type": "module",
   "workspaces": [
     "src/ICP_frontend"
-  ]
+  ],
+  "devDependencies": {
+    "@dfinity/auth-client": "^1.4.0",
+    "@dfinity/identity": "^1.4.0"
+  }
 }

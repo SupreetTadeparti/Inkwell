@@ -1,29 +1,15 @@
-import { useState } from 'react';
-import { ICP_backend } from 'declarations/ICP_backend';
+import { useAuth } from "./AuthContext";
+import { Navigate, useSearchParams } from "react-router-dom"
 
 function App() {
-  const [greeting, setGreeting] = useState('');
+  const { actor } = useAuth();
+  const [searchParams] = useSearchParams();
 
-  function handleSubmit(event) {
-    event.preventDefault();
-    const name = event.target.elements.name.value;
-    // ICP_backend.greet(name).then((greeting) => {
-    //   setGreeting(greeting);
-    // });
-    return false;
-  }
+  if (actor === null) return <Navigate to={`/?canisterId=${searchParams.get('canisterId')}`} />
 
   return (
     <main>
       <img src="/logo2.svg" alt="DFINITY logo" />
-      <br />
-      <br />
-      <form action="#" onSubmit={handleSubmit}>
-        <label htmlFor="name">Enter your name: &nbsp;</label>
-        <input id="name" alt="Name" type="text" />
-        <button type="submit">Click Me!</button>
-      </form>
-      <section id="greeting">{greeting}</section>
     </main>
   );
 }
