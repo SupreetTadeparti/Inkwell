@@ -2,9 +2,11 @@ import React, { createContext, useState, useContext, useEffect } from 'react';
 import { AuthClient } from '@dfinity/auth-client';
 import { HttpAgent } from '@dfinity/agent';
 import { createActor } from "../../declarations/ICP_backend";
+
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
+    const [authenticated, setAuthenticated] = useState(null);
     const [authClient, setAuthClient] = useState(null);
     const [actor, setActor] = useState(null);
 
@@ -18,14 +20,12 @@ export const AuthProvider = ({ children }) => {
     const init = async () => {
         const client = await AuthClient.create();
         setAuthClient(client);
-    }
-
-    const isLoggedIn = async () => {
-        console.log("Here");
-        return await authClient.isAuthenticated()
+        setAuthenticated(await client.isAuthenticated());
     }
 
     const login = async () => {
+        if (authClient === null) return console.error("Auth Client is null");
+
         await new Promise((resolve) => {
             authClient.login({
                 identityProvider: internetIdentityUrl,
@@ -39,18 +39,20 @@ export const AuthProvider = ({ children }) => {
 
         setAuthClient(authClient);
         setActor(newActor);
+        setAuthenticated(true);
     };
 
     const logout = async () => {
-        if (authClient) {
-            await authClient.logout();
-            setAuthClient(null);
-            setActor(null);
-        }
+        if (authClient === null) return console.error("Auth Client is null");
+
+        await authClient.logout();
+        setAuthClient(null);
+        setActor(null);
+        setAuthenticated(false);
     };
 
     return (
-        <AuthContext.Provider value={{ authClient, actor, login, logout, isLoggedIn }}>
+        <AuthContext.Provider value={{ authClient, actor, login, logout, authenticated }}>
             {children}
         </AuthContext.Provider>
     );

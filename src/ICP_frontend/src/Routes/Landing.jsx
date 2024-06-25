@@ -1,5 +1,5 @@
 // src/App.js
-import React, { useRef } from 'react';
+import React from 'react';
 import Nav from '../Components/Nav';
 import SectionContent from '../Components/SectionContent';
 import Lock from '../Components/Lock';
@@ -10,7 +10,7 @@ import { useParallax } from 'react-scroll-parallax';
 import '../assets/css/Landing.css';
 
 function Landing() {
-  const [offsetY, setOffsetY] = useState(0);
+  const [_offsetY, setOffsetY] = useState(0);
   const { ref } = useParallax({ speed: 10, translateY: [-100, 100] });
 
   const handleScroll = () => {
@@ -67,7 +67,6 @@ function Landing() {
               'All your docs, in one place.',
               3000
             ]} wrapper='div' repeat={Infinity} className='note-text' />
-            {/* <div className="note-text">All your notes, in one place.</div> */}
           </div>
         </section>
         <section className="content-section">

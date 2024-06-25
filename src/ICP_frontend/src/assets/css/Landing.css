@@ -82,10 +82,11 @@ body {
 }
 
 .content-section {
-  width: 100%;
+  width: 80%;
+  margin: 0 auto;
   position: relative;
   display: flex;
-  justify-content: space-evenly;
+  justify-content: space-between;
   gap: .5em;
   padding-top: 10em;
 }
