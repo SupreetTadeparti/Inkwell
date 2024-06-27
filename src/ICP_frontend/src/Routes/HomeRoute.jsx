@@ -28,11 +28,11 @@ function HomeRoute() {
 
   // if (authenticated === false) navigate(`/?canisterId=${process.env.CANISTER_ID}`)
 
-  return <div className="app-container">
+  return <div className="home-container">
     <div className="background"></div>
     <BallsBackground parallax={false} />
     <SideBar />
-    <FilterBar allNotes={allNotes} notes={setNotes} />
+    <FilterBar allNotes={allNotes} setNotes={setNotes} />
     <Notes notes={notes} />
   </div>
 }

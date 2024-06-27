@@ -1,4 +1,4 @@
-.app-container {
+.home-container {
     width: 100%;
     height: 100%;
     display: grid;
@@ -8,15 +8,15 @@
     padding: 1em;
 }
 
-.app-container>.midground {
+.home-container>.midground {
     overflow: hidden;
 }
 
-.app-container>*:not(.background) {
+.home-container>*:not(.background) {
     border-radius: .5em;
 }
 
-.app-container>.background {
+.home-container>.background {
     background-color: #8BC6EC;
     background-image: linear-gradient(45deg, #8BC6EC 0%, #9599E2 100%);
 }
@@ -48,7 +48,6 @@
     cursor: pointer;
     background-color: var(--btn-clr);
     box-shadow: 0 0 10px 5px var(--btn-clr);
-    padding: .25em;
     display: flex;
     color: white;
     font-size: 3em;
@@ -56,8 +55,6 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    width:2em;
-    height:2em;
 }
 
 .new-note-btn.glass {
@@ -136,7 +133,8 @@
 }
 
 /* Notes Preview */
-.note-preview {
+.note-preview.glass {
+    cursor: pointer;
     grid-row: span 2;
     width: 100%;
     height: 100%;
@@ -145,8 +143,13 @@
     flex-direction: column;
     gap: 1em;
     padding: 1em;
-    border: 4px solid var(--note-clr) !important;
-    box-shadow: 0 0 5px 0 var(--note-clr) !important;
+    border: 4px solid var(--note-clr);
+    box-shadow: 0 0 3px 0 var(--note-clr);
+    transition: background-color 75ms ease-out;
+}
+
+.note-preview.glass:hover {
+    background-color: rgba(240, 240, 240, 0.4);
 }
 
 .note-preview__title {
@@ -192,4 +195,3 @@
     font-weight: 500;
     border-bottom: 3px solid white;
 }
-

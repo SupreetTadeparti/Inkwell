@@ -5,7 +5,7 @@ import NoteEditor from "../Components/NoteEditor";
 
 function NoteRoute() {
     return (
-        <div className="app-container">
+        <div className="note-container">
             <div className="background"></div>
             <NoteHeader />
             <NoteEditor />

@@ -5,19 +5,14 @@ import CategoryTab from "./CategoryTab";
 import SearchBar from "./SearchBar";
 
 function FilterBar({ allNotes, setNotes }) {
-    const [categories, setCategories] = useState([
-        { name: "All", color: "#ffffff", isSelected: true },
-        { name: "Journal", color: "#ff6a6a", isSelected: false },
-        { name: "Philosophy", color: "#53e86b", isSelected: false },
-        { name: "Work", color: "#278bff", isSelected: false }
-    ]);
+    const [categories, setCategories] = useState([]);
 
-    const [selectedIdx, setSelectedIdx] = useState([]);
+    const [selectedIdx, setSelectedIdx] = useState(0);
 
     const { actor } = useAuth();
 
     async function getCategories() {
-        setCategories(await (actor ?? ICP_backend).getCategories())
+        setCategories([{ name: "All", color: "white", all: true }, ...(await (actor ?? ICP_backend).getCategories())])
     }
 
     async function createCategory() {
@@ -35,12 +30,13 @@ function FilterBar({ allNotes, setNotes }) {
         </div>
         <div className="categories-container">
             {categories.map((category, idx) => <CategoryTab
+                key={idx}
                 name={category.name}
                 color={category.color}
-                isSelected={selectedIdx == idx}
-                onClick={() => {
+                isSelected={selectedIdx === idx}
+                click={() => {
                     setSelectedIdx(idx);
-                    setNotes(allNotes.filter(() => note.category.id === category.id))
+                    setNotes(allNotes.filter((note) => category.all || note.category.id === category.id))
                 }}
             />)}
             <div className="create-category" onClick={createCategory}>+</div>

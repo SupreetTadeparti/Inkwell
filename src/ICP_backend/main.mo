@@ -23,7 +23,7 @@ actor {
     owner : Principal;
     var title : Text;
     var content : Text;
-    var category : SharedCategory;
+    var category : ?SharedCategory;
   };
 
   type SharedNote = {
@@ -31,7 +31,7 @@ actor {
     owner : Principal;
     title : Text;
     content : Text;
-    category : SharedCategory;
+    category : ?SharedCategory;
   };
 
   var noteId : Nat = 0;
@@ -77,32 +77,8 @@ actor {
   };
 
   // Create
-  public shared (msg) func createCategory(name : Text, color : Text) : async () {
-    let category : Category = {
-      id = categoryId;
-      owner = msg.caller;
-      var name = name;
-      var color = color;
-    };
 
-    categoryId += 1;
-
-    let categories : ?Buffer.Buffer<Category> = categoryRecord.get(msg.caller);
-
-    switch (categories) {
-      case (null) {
-        let newCategoryBuffer : Buffer.Buffer<Category> = Buffer.Buffer<Category>(1);
-        newCategoryBuffer.add(category);
-        categoryRecord.put(msg.caller, newCategoryBuffer);
-      };
-      case (?categoryBuffer) {
-        categoryBuffer.add(category);
-        categoryRecord.put(msg.caller, categoryBuffer);
-      };
-    };
-  };
-
-  public shared (msg) func createNote(title : Text, content : Text, category : SharedCategory) : async () {
+  public shared (msg) func createNote(title : Text, content : Text, category : ?SharedCategory) : async Nat {
     let note : Note = {
       id = noteId;
       owner = msg.caller;
@@ -124,6 +100,33 @@ actor {
       case (?noteBuffer) {
         noteBuffer.add(note);
         notesRecord.put(msg.caller, noteBuffer);
+      };
+    };
+
+    noteId - 1;
+  };
+
+  public shared (msg) func createCategory(name : Text, color : Text) : async () {
+    let category : Category = {
+      id = categoryId;
+      owner = msg.caller;
+      var name = name;
+      var color = color;
+    };
+
+    categoryId += 1;
+
+    let categories : ?Buffer.Buffer<Category> = categoryRecord.get(msg.caller);
+
+    switch (categories) {
+      case (null) {
+        let newCategoryBuffer : Buffer.Buffer<Category> = Buffer.Buffer<Category>(1);
+        newCategoryBuffer.add(category);
+        categoryRecord.put(msg.caller, newCategoryBuffer);
+      };
+      case (?categoryBuffer) {
+        categoryBuffer.add(category);
+        categoryRecord.put(msg.caller, categoryBuffer);
       };
     };
   };
@@ -195,7 +198,7 @@ actor {
   };
 
   // Update
-  public shared (msg) func updateNote(id : Nat, title : Text, content : Text, category : SharedCategory) : async () {
+  public shared (msg) func updateNote(id : Nat, title : Text, content : Text, category : ?SharedCategory) : async () {
     let note : ?Note = getInternalNote(msg.caller, id);
 
     switch (note) {

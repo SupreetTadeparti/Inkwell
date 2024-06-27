@@ -11,7 +11,7 @@
 }
 
 .glass {
-    background-color: rgba(240, 242, 245, 0.2);
+    background-color: rgba(240, 240, 240, 0.2);
     border-radius: 10px;
     border: solid 1px white;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
