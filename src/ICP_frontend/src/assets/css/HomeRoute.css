@@ -176,7 +176,7 @@
 }
 
 .tab:hover {
-    transform: scale(1.125);
+    transform: scale(1.075);
     transform-origin: bottom;
     cursor: pointer;
 }

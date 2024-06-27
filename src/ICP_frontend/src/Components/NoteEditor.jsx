@@ -24,28 +24,24 @@ import {
   ConditionalContents
 } from '@mdxeditor/editor';
 
-const simpleSandpackConfig = {
-  defaultPreset: 'react',
-  presets: [
-    {
-      label: 'React',
-      name: 'react',
-      meta: 'live react',
-      sandpackTemplate: 'react',
-      sandpackTheme: 'light',
-      snippetFileName: '/App.js',
-      snippetLanguage: 'jsx',
-    },
-  ]
-}
 
-const NoteEditor = () => {
-  const ref = React.useRef(null)
+function NoteEditor({ note, setNote }) {
+  const ref = useRef(null);
+
+  const updateNoteState = () => {
+    setNote(prevState => ({
+      ...prevState, 
+      content: ref.current?.getMarkdown()})
+    );
+    console.log(note);
+  }
+
   return (
     <div className='editor-container'>
       <MDXEditor
-        markdown={'# Hello World'}
+        markdown={note.content}
         ref={ref}
+        onChange={updateNoteState}
         plugins={[
           headingsPlugin(),
           listsPlugin(),
@@ -54,7 +50,6 @@ const NoteEditor = () => {
           linkPlugin(),
           linkDialogPlugin(),
           codeBlockPlugin({ defaultCodeBlockLanguage: 'js' }),
-          sandpackPlugin({ sandpackConfig: simpleSandpackConfig }),
           codeMirrorPlugin({ codeBlockLanguages: { js: 'JavaScript', css: 'CSS' } }),
           toolbarPlugin({
             toolbarContents: () => (
@@ -63,17 +58,14 @@ const NoteEditor = () => {
                 <BoldItalicUnderlineToggles />
                 <BlockTypeSelect />
                 <CodeToggle />
-                {/* <InsertCodeBlock /> */}
                 <CreateLink />
                 <DiffSourceToggleWrapper />
                 <ConditionalContents
                   options={[
                     { when: (editor) => editor?.editorType === 'codeblock', contents: () => <ChangeCodeMirrorLanguage /> },
-                    { when: (editor) => editor?.editorType === 'sandpack', contents: () => <ShowSandpackInfo /> },
                     {
                       fallback: () => (<>
                         <InsertCodeBlock />
-                        {/* <InsertSandpack /> */}
                       </>)
                     }
                   ]}
@@ -81,7 +73,6 @@ const NoteEditor = () => {
               </>
             )
           })]} />
-      <button onClick={() => console.log(ref.current?.getMarkdown())}>Get markdown</button>
     </div>
   );
 }

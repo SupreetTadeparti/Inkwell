@@ -31,6 +31,7 @@ function FilterBar({ allNotes, setNotes }) {
         <div className="categories-container">
             {categories.map((category, idx) => <CategoryTab
                 key={idx}
+                id={category.id}
                 name={category.name}
                 color={category.color}
                 isSelected={selectedIdx === idx}

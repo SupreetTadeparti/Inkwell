@@ -10,15 +10,6 @@
     box-sizing: border-box;
 }
 
-.glass {
-    background-color: rgba(240, 240, 240, 0.2);
-    border-radius: 10px;
-    border: solid 1px white;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-    backdrop-filter: blur(8px);
-}
-
-
 html {
     overflow-x: hidden;
 }
@@ -36,4 +27,24 @@ body,
 
 input {
     font-family: "Josefin Sans", sans-serif;
+}
+
+.glass {
+    background-color: rgba(240, 240, 240, 0.2);
+    border-radius: 10px;
+    border: solid 1px white;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(8px);
+}
+
+.renamable-input {
+    background-color: transparent;
+    border: none;
+    color: white;
+    font-size: 1em;
+    width: 8em;
+}
+
+.renamable-input:focus {
+    outline: none;  
 }

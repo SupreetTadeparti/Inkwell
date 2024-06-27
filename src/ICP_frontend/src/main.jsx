@@ -10,7 +10,6 @@ import { AuthProvider } from './AuthContext';
 import { CookiesProvider } from 'react-cookie';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
     <CookiesProvider>
       <AuthProvider>
         <ParallaxProvider>
@@ -24,5 +23,4 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         </ParallaxProvider>
       </AuthProvider>
     </CookiesProvider>
-  </React.StrictMode>,
 );

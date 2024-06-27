@@ -17,7 +17,7 @@ function Notes({ notes }) {
     // ]);
 
     return <div className="notes-container">
-        {notes.map(note => <NotePreview title={note.title} content={note.content} color={note.category?.color ?? "white"} />)}
+        {notes.map(note => <NotePreview id={note.id} title={note.title} content={note.content} color={note.category?.color ?? "white"} />)}
     </div>
 }
 

@@ -159,24 +159,24 @@ actor {
     };
   };
 
-  // public shared query (msg) func getNote(id : Nat) : async ?SharedNote {
-  //   let notes : ?Buffer.Buffer<Note> = notesRecord.get(msg.caller);
+  public shared query (msg) func getNote(id : Nat) : async ?SharedNote {
+    let notes : ?Buffer.Buffer<Note> = notesRecord.get(msg.caller);
 
-  //   switch (notes) {
-  //     case (null) {
-  //       return null;
-  //     };
-  //     case (?noteBuffer) {
-  //       for (note in noteBuffer.vals()) {
-  //         if (note.id == id) {
-  //           assert note.owner == msg.caller;
-  //           return ?noteToSharedNote(note);
-  //         };
-  //       };
-  //       return null;
-  //     };
-  //   };
-  // };
+    switch (notes) {
+      case (null) {
+        return null;
+      };
+      case (?noteBuffer) {
+        for (note in noteBuffer.vals()) {
+          if (note.id == id) {
+            assert note.owner == msg.caller;
+            return ?noteToSharedNote(note);
+          };
+        };
+        return null;
+      };
+    };
+  };
 
   private func getInternalNote(caller : Principal, id : Nat) : ?Note {
     let notes : ?Buffer.Buffer<Note> = notesRecord.get(caller);
@@ -197,8 +197,27 @@ actor {
     };
   };
 
+  private func getInternalCategory(caller : Principal, id : Nat) : ?Category {
+    let categories : ?Buffer.Buffer<Category> = categoryRecord.get(caller);
+
+    switch (categories) {
+      case (null) {
+        null;
+      };
+      case (?categoryBuffer) {
+        for (category in categoryBuffer.vals()) {
+          if (category.id == id) {
+            assert category.owner == caller;
+            return ?category;
+          };
+        };
+        return null;
+      };
+    };
+  };
+
   // Update
-  public shared (msg) func updateNote(id : Nat, title : Text, content : Text, category : ?SharedCategory) : async () {
+  public shared (msg) func updateNote(id : Nat, title : ?Text, content : ?Text, category : ?SharedCategory) : async () {
     let note : ?Note = getInternalNote(msg.caller, id);
 
     switch (note) {
@@ -206,29 +225,35 @@ actor {
         return;
       };
       case (?noteToUpdate) {
-        noteToUpdate.title := title;
-        noteToUpdate.content := content;
+        switch (title) {
+          case (null) {};
+          case (?newTitle) {
+            noteToUpdate.title := newTitle;
+          };
+        };
+
+        switch (content) {
+          case (null) {};
+          case (?newContent) {
+            noteToUpdate.content := newContent;
+          };
+        };
+
         noteToUpdate.category := category;
       };
     };
   };
 
   public shared (msg) func updateCategory(id : Nat, name : Text, color : Text) : async () {
-    let categories : ?Buffer.Buffer<Category> = categoryRecord.get(msg.caller);
+    let category : ?Category = getInternalCategory(msg.caller, id);
 
-    switch (categories) {
+    switch (category) {
       case (null) {
         return;
       };
-      case (?categoryBuffer) {
-        for (category in categoryBuffer.vals()) {
-          if (category.id == id) {
-            assert category.owner == msg.caller;
-            category.name := name;
-            category.color := color;
-            return;
-          };
-        };
+      case (?categoryToUpdate) {
+        categoryToUpdate.name := name;
+        categoryToUpdate.color := color;
       };
     };
   };

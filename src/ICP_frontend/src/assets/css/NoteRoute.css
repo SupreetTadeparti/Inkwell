@@ -30,6 +30,11 @@
     width: 2em;
 }
 
+.button:hover {
+    transform: scale(1.075);
+    cursor: pointer;
+}
+
 .note-details {
     width: 100%;
     gap: 1em;
@@ -46,7 +51,11 @@
     padding: 0.25em 0.5em;
 }
 
-/* .note-title {} */
+.save-button {
+    border-radius: 1em;
+    padding: 0.5em 1em;
+    background-color: white;
+}
 
 .editor-container .mdxeditor-toolbar {
     border-radius: 1em;
