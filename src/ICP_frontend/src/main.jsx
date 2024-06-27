@@ -17,9 +17,8 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           <Router>
             <Routes>
               <Route path='/' element={<LandingRoute />} />
-              <Route path='app' element={<HomeRoute />}>
-                <Route path=":noteId" element={<NoteRoute />} />
-              </Route>
+              <Route path='app' element={<HomeRoute />} />
+              <Route path="note" element={<NoteRoute />} />
             </Routes>
           </Router>
         </ParallaxProvider>

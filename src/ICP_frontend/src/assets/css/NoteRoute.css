@@ -1,0 +1,31 @@
+.app-container {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-rows: repeat(5, 1fr);
+    grid-template-columns: repeat(1, 1fr);
+    grid-gap: 2em;
+    padding: 1em;
+}
+
+.app-container>.background {
+    background-color: #8BC6EC;
+    background-image: linear-gradient(45deg, #8BC6EC 0%, #9599E2 100%);
+}
+
+.top-bar {
+    grid-row: 1 / span 1;
+    grid-column: 1 / span 1;
+    display: flex;
+}
+
+.editor-container {
+    grid-row: 2 / span 4;
+    grid-column: 1 / span 1;
+    border-radius: 1em;
+}
+
+.back-icon {
+    display: flex;
+    width: 2em;
+}

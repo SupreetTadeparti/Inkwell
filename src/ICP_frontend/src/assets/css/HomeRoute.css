@@ -21,11 +21,9 @@
     background-image: linear-gradient(45deg, #8BC6EC 0%, #9599E2 100%);
 }
 
-/* Side Bar */
 .side-bar {
     grid-row: 1 / span 5;
     grid-column: 1 / span 1;
-    background: blue;
     display: flex;
     flex-direction: column;
     gap: 2em;
@@ -53,22 +51,23 @@
     padding: .25em;
     display: flex;
     color: white;
-    font-size: 2.5em;
+    font-size: 3em;
     aspect-ratio: 1;
     display: flex;
     justify-content: center;
     align-items: center;
+    width:2em;
+    height:2em;
 }
 
 .new-note-btn.glass {
-    border-radius: 100%;
+    border-radius: 5%;
 }
 
-/* Filter Bar (Search and Categories) */
+/* Filter Ball */
 .filter-bar {
     grid-row: 1 / span 1;
     grid-column: 2 / span 4;
-    background: green;
     display: flex;
     flex-direction: column;
 }
@@ -81,7 +80,7 @@
     height: 100%;
 }
 
-
+/* Search Bar */
 .search-bar-container {
     padding: 10px 20px;
     width: 100%;
@@ -99,15 +98,13 @@
     box-shadow: none;
 }
 
-/* Search Bar */
 .search-bar:hover {
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
 }
 
 .search-bar__icon {
-    width: 5%;
-    aspect-ratio: 1;
     display: flex;
+    width: 2em;
 }
 
 .search-bar__input {
@@ -196,8 +193,3 @@
     border-bottom: 3px solid white;
 }
 
-.small-circle {
-    height: 30px;
-    width: 30px;
-    border-radius: 100%;
-}

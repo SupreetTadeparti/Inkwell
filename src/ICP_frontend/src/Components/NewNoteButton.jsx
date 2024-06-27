@@ -1,33 +1,13 @@
 import { useState } from "react";
-
-const ColorCircle = ({ color }) => {
-    return (
-        <div className='small-circle' style={{ backgroundColor: color }}>
-
-        </div>
-    );
-};
+import { useAuth } from "../AuthContext";
+import { ICP_backend } from "../../../declarations/ICP_backend";
 
 function NewNoteButton() {
-    let [subComponents, setSubcomponents] = useState([]);
+    const { actor } = useAuth();
 
-    let numCategories = 3;
-    let categoryColors = ['red', 'blue', 'yellow'];
-
-    function colorSelect(numCategories, categoryColors) {
-        const subComponents = [];
-
-        for (let i = 0; i < numCategories; i++) {
-            subComponents.push(<ColorCircle color={categoryColors[i]} />)
-        }
-
-        setSubcomponents(subComponents)
-    }
-
-    return <>
-        
-        <div onClick={() => colorSelect(numCategories, categoryColors)} className="new-note-btn glass">+{subComponents}</div>
-    </>
+    return <div className="new-note-btn glass" onClick={async () => {
+        await (actor ?? ICP_backend).createNote();
+    }}>+</div>
 }
 
 export default NewNoteButton
