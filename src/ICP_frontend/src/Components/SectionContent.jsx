@@ -1,6 +1,4 @@
-import "../assets/css/SectionContent.css"
 import Tilt from 'react-parallax-tilt';
-
 
 function SectionContent({ heading, content }) {
     return <Tilt tiltMaxAngleX={10} tiltMaxAngleY={10} className="section-content-container">

@@ -1,22 +1,25 @@
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../AuthContext";
-import "../assets/css/Nav.css"
 
 function Nav() {
     const { login, logout, authenticated } = useAuth();
     const navigate = useNavigate();
-    const [searchParams] = useSearchParams();
+
+    const navigateToApp = () => {
+        navigate(`/app?canisterId=${process.env.CANISTER_ID}`);
+    }
 
     return <nav className="navbar">
         <h1 className="navbar-brand">Inkwell</h1>
         <div className="navbar-links">
+            <div onClick={navigateToApp}>{authenticated === null ? "Loading..." : authenticated && "Home"}</div>
             <div onClick={async () => {
                 if (authenticated === null) return;
 
                 if (authenticated) await logout();
                 else {
                     await login();
-                    navigate(`/app?canisterId=${searchParams.get('canisterId')}`);
+                    navigateToApp();
                 }
             }}>{authenticated === null ? "Loading..." : authenticated ? "Logout" : "Login"}</div>
         </div>

@@ -1,14 +1,40 @@
-html {
-  /* Causes Lag in the Parallax Background
-  : */
-  /* scroll-behavior: smooth; */
-  overflow-x: hidden;
+.landing-page-container {
+  width: 100%;
+  height: 100%;
+  padding: 2em 4em;
 }
 
-body {
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 80%;
+  margin: auto;
+  padding: 1.5em 0;
+  font-size: 1.1em;
+}
+
+.navbar-brand {
+  color: var(--text);
   margin: 0;
-  box-sizing: border-box;
-  padding: 2em 4em;
+}
+
+.navbar-links {
+  display: flex;
+  gap: 1.5em;
+}
+
+.navbar-links>* {
+  cursor: pointer;
+  color: var(--text);
+  text-decoration: none;
+  font-size: 1.25em;
+  padding: 0.25em 0;
+  transition: transform 50ms ease-out;
+}
+
+.navbar-links>*:hover {
+  transform: scale(1.05);
 }
 
 .home-section {
@@ -16,6 +42,7 @@ body {
   display: flex;
   justify-content: center;
 }
+
 
 .note-sample {
   display: flex;
@@ -38,33 +65,7 @@ body {
   white-space: nowrap;
   overflow: hidden;
   color: white;
-  /* animation: typing 3s steps(40, end) forwards, blink-caret 0.5s step-end 3s;
-  width: 0; */
 }
-
-/* 
-@keyframes typing {
-  from {
-    width: 0;
-  }
-
-  to {
-    width: 22ch;
-  }
-}
-
-@keyframes blink-caret {
-
-  from,
-  to {
-    border-color: transparent;
-  }
-
-  50% {
-    border-color: black;
-  }
-} */
-
 
 .background {
   position: fixed;
@@ -151,47 +152,49 @@ body {
   font-size: 1.8em;
 }
 
+.lock {
+  display: flex;
+  justify-content: center;
+  width: 20em;
+}
+
+.lock>img {
+  width: 65%;
+}
+
+.section-content-container {
+  width: 50%;
+}
+
+.section-content {
+  margin-left: auto;
+  height: 20em;
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+  padding: 2.5em;
+}
+
+.section-content__heading {
+  color: white;
+  font-size: 1.8em;
+}
+
+.section-content__content {
+  color: white;
+  font-weight: 300;
+}
+
 .midground {
-  position: absolute;
+  position: fixed;
+  top: 0;
+  left: 0;
   height: 100%;
   width: 100%;
   z-index: -1;
 }
-
-/* 
-.ball {
-  border-radius: 50%;
-  position: absolute;
-  background-color: blue;
-}
-
-.ball:nth-child(1) {
-  height: 150px;
-  width: 150px;
-  top: 10%;
-  left: 30%;
-}
-
-.ball:nth-child(2) {
-  height: 150px;
-  width: 150px;
-  top: 20%;
-  left: 40%;
-}
-
-.ball:nth-child(3) {
-  height: 150px;
-  width: 150px;
-  top: 50%;
-  left: 10%;
-}
-
-.ball:nth-child(4) {
-  height: 150px;
-  width: 150px;
-  top: 80%;
-  left: 80%;
-} */
 
 
 footer {

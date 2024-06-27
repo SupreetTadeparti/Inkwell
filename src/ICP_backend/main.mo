@@ -8,6 +8,13 @@ actor {
   type Note = {
     id : Nat;
     owner : Principal;
+    var content : Text;
+    var color : Color;
+  };
+
+  type SharedNote = {
+    id : Nat;
+    owner : Principal;
     content : Text;
     color : Color;
   };
@@ -20,12 +27,17 @@ actor {
     Principal.hash,
   );
 
-  public shared (msg) func uploadNote(content : Text, color : Color) : async () {
+  private func noteEqual(a : Note, b : Note) : Bool {
+    a.id == b.id;
+  };
+
+  // Create
+  public shared (msg) func createNote(content : Text, color : Color) : async () {
     let note : Note = {
       id = noteId;
       owner = msg.caller;
-      content = content;
-      color = color;
+      var content = content;
+      var color = color;
     };
 
     noteId += 1;
@@ -45,10 +57,83 @@ actor {
     };
   };
 
-  private func noteEqual(a : Note, b : Note) : Bool {
-    a.id == b.id;
+  // Read
+  private func noteToSharedNote(note : Note) : SharedNote {
+    {
+      id = note.id;
+      owner = note.owner;
+      content = note.content;
+      color = note.color;
+    };
   };
 
+  public shared query (msg) func getNotes() : async [SharedNote] {
+    let notes : ?Buffer.Buffer<Note> = notesRecord.get(msg.caller);
+
+    switch (notes) {
+      case (null) {
+        return [];
+      };
+      case (?noteBuffer) {
+        return Buffer.toArray(Buffer.map<Note, SharedNote>(noteBuffer, noteToSharedNote));
+      };
+    };
+  };
+
+  public shared query (msg) func getNote(id : Nat) : async ?SharedNote {
+    let notes : ?Buffer.Buffer<Note> = notesRecord.get(msg.caller);
+
+    switch (notes) {
+      case (null) {
+        return null;
+      };
+      case (?noteBuffer) {
+        for (note in noteBuffer.vals()) {
+          if (note.id == id) {
+            assert note.owner == msg.caller;
+            return ?noteToSharedNote(note);
+          };
+        };
+        return null;
+      };
+    };
+  };
+
+  private func getInternalNote(caller : Principal, id : Nat) : ?Note {
+    let notes : ?Buffer.Buffer<Note> = notesRecord.get(caller);
+
+    switch (notes) {
+      case (null) {
+        null;
+      };
+      case (?noteBuffer) {
+        for (note in noteBuffer.vals()) {
+          if (note.id == id) {
+            assert note.owner == caller;
+            return ?note;
+          };
+        };
+        return null;
+      };
+    };
+  };
+
+  // Update
+  public shared (msg) func updateNote(id : Nat, content : Text, color : Color) : async () {
+    let note : ?Note = getInternalNote(msg.caller, id);
+
+    switch (note) {
+      case (null) {
+        return;
+      };
+      case (?noteToUpdate) {
+        noteToUpdate.content := content;
+        noteToUpdate.color := color;
+      };
+    };
+  };
+
+  // Delete
   public shared (msg) func deleteNote(id : Nat) : async () {
     let notes : ?Buffer.Buffer<Note> = notesRecord.get(msg.caller);
 
@@ -61,38 +146,6 @@ actor {
             let _dont_delete_me = Buffer.indexOf<Note>(note, noteBuffer, noteEqual);
           };
         };
-      };
-    };
-  };
-
-  public shared query (msg) func getNotes() : async [Note] {
-    let notes : ?Buffer.Buffer<Note> = notesRecord.get(msg.caller);
-
-    switch (notes) {
-      case (null) {
-        return [];
-      };
-      case (?noteBuffer) {
-        return Buffer.toArray(noteBuffer);
-      };
-    };
-  };
-
-  public shared query (msg) func getNote(id : Nat) : async ?Note {
-    let notes : ?Buffer.Buffer<Note> = notesRecord.get(msg.caller);
-
-    switch (notes) {
-      case (null) {
-        return null;
-      };
-      case (?noteBuffer) {
-        for (note in noteBuffer.vals()) {
-          if (note.id == id) {
-            assert note.owner == msg.caller;
-            return ?note;
-          };
-        };
-        return null;
       };
     };
   };

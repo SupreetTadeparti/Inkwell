@@ -4,10 +4,36 @@
     font-family: "Josefin Sans", sans-serif;
 }
 
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
 .glass {
     background-color: rgba(240, 242, 245, 0.2);
     border-radius: 10px;
     border: solid 1px white;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
     backdrop-filter: blur(8px);
+}
+
+
+html {
+    overflow-x: hidden;
+}
+
+body {
+    margin: 0;
+}
+
+html,
+body,
+#root {
+    width: 100%;
+    height: 100%;
+}
+
+input {
+    font-family: "Josefin Sans", sans-serif;
 }

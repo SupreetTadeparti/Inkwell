@@ -1,9 +1,0 @@
-.lock {
-    display: flex;
-    justify-content: center;
-    width: 20em;
-}
-
-.lock>img {
-    width: 65%;
-}
