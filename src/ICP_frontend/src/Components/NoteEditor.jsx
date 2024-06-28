@@ -22,7 +22,8 @@ function NoteEditor({ note, setNote }) {
   const ref = useRef(null);
 
   const updateNoteState = () => {
-    setNote(prev => ({ ...prev, content: ref.current?.getMarkdown() }));
+    setNote(prev => ({ ...prev, content: ref.current?.getMarkdown() })
+);
   }
 
   useEffect(() => {
