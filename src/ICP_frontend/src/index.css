@@ -31,7 +31,7 @@ input {
 
 .glass {
     background-color: rgba(240, 240, 240, 0.2);
-    border-radius: 10px;
+    border-radius: .35em;
     border: solid 1px white;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
     backdrop-filter: blur(8px);

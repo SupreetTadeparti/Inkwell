@@ -7,9 +7,9 @@ function NewNoteButton() {
     const { actor } = useAuth();
     const navigate = useNavigate();
 
-    return <div className="new-note-btn glass" onClick={async () => {
+    return <div className="new-note-btn button glass" onClick={async () => {
         const noteId = await (actor ?? ICP_backend).createNote("New Note", "", []);
-        navigate(`/note?canisterId=${process.env.CANISTER_ID}&${noteId}`);
+        navigate(`/note?canisterId=${process.env.CANISTER_ID}&id=${noteId}`);
     }}>+</div>
 }
 

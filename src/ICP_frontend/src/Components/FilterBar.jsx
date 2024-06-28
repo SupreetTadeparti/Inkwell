@@ -35,6 +35,7 @@ function FilterBar({ allNotes, setNotes }) {
                 name={category.name}
                 color={category.color}
                 isSelected={selectedIdx === idx}
+                renamable={category.all !== true}
                 click={() => {
                     setSelectedIdx(idx);
                     setNotes(allNotes.filter((note) => category.all || note.category.id === category.id))

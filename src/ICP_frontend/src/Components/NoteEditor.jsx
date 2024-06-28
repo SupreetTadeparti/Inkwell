@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useRef } from 'react';
 import '@mdxeditor/editor/style.css';
 import {
@@ -10,18 +10,11 @@ import {
   toolbarPlugin,
   linkDialogPlugin,
   linkPlugin,
-  codeBlockPlugin,
-  sandpackPlugin,
-  codeMirrorPlugin,
   UndoRedo,
   BoldItalicUnderlineToggles,
   BlockTypeSelect,
   CodeToggle,
-  InsertCodeBlock,
-  CreateLink,
-  DiffSourceToggleWrapper,
-  SandpackConfig,
-  ConditionalContents
+  CreateLink
 } from '@mdxeditor/editor';
 
 
@@ -29,12 +22,12 @@ function NoteEditor({ note, setNote }) {
   const ref = useRef(null);
 
   const updateNoteState = () => {
-    setNote(prevState => ({
-      ...prevState, 
-      content: ref.current?.getMarkdown()})
-    );
-    console.log(note);
+    setNote(prev => ({ ...prev, content: ref.current?.getMarkdown() }));
   }
+
+  useEffect(() => {
+    ref.current?.setMarkdown(note.content)
+  }, [note.content])
 
   return (
     <div className='editor-container'>
@@ -49,27 +42,14 @@ function NoteEditor({ note, setNote }) {
           thematicBreakPlugin(),
           linkPlugin(),
           linkDialogPlugin(),
-          codeBlockPlugin({ defaultCodeBlockLanguage: 'js' }),
-          codeMirrorPlugin({ codeBlockLanguages: { js: 'JavaScript', css: 'CSS' } }),
           toolbarPlugin({
             toolbarContents: () => (
               <>
                 <UndoRedo />
                 <BoldItalicUnderlineToggles />
                 <BlockTypeSelect />
-                <CodeToggle />
                 <CreateLink />
-                <DiffSourceToggleWrapper />
-                <ConditionalContents
-                  options={[
-                    { when: (editor) => editor?.editorType === 'codeblock', contents: () => <ChangeCodeMirrorLanguage /> },
-                    {
-                      fallback: () => (<>
-                        <InsertCodeBlock />
-                      </>)
-                    }
-                  ]}
-                />
+                <CodeToggle />
               </>
             )
           })]} />

@@ -19,11 +19,9 @@ function NoteRoute() {
     const initializeNote = async () => {
         const targetNote = await (actor ?? ICP_backend).getNote(+searchParams.get('id'))
         if (targetNote.length === 0) {
-            console.log("Note not found!");
             navigate(`/app?canisterId=${process.env.CANISTER_ID}`);
             return;
         }
-        console.log(targetNote[0]);
         setNote(targetNote[0]);
     }
 
