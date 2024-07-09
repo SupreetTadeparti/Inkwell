@@ -24,11 +24,11 @@
     "lodash": "^4.17.21",
     "markdown-to-txt": "^2.0.1",
     "react": "^18.2.0",
-    "react-cookie": "^7.1.4",
     "react-dom": "^18.2.0",
     "react-parallax-tilt": "^1.7.229",
     "react-router-dom": "^6.23.1",
     "react-scroll-parallax": "^3.4.5",
+    "react-toastify": "^10.0.5",
     "react-type-animation": "^3.2.0",
     "reactjs-popup": "^2.0.6",
     "tsparticles": "^3.4.0"

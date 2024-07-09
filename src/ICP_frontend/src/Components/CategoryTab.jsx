@@ -1,21 +1,39 @@
 import RenamableText from "./RenamableText";
 import { useAuth } from "../AuthContext";
-import { ICP_backend } from "../../../declarations/ICP_backend";
+import { useState } from "react";
 
-const CategoryTab = ({ id, name, color, isSelected, renamable, click }) => {
-  const { actor } = useAuth();
+const CategoryTab = ({ id, name, clr, isSelected, changable, click }) => {
+  const { getActor } = useAuth();
+  const [color, setColor] = useState(clr);
+
+  const handleColor = (e) => {
+    setColor(e.target.value);
+  };
+
+  const saveColor = async (e) => {
+    await (await getActor()).updateCategory(id, name, color);
+  };
 
   return (
     <div className={`tab ${isSelected ? "selected" : ""}`} onClick={click}>
-      <div className="circle" style={{ backgroundColor: color }}></div>
+      <div className="circle">
+        <input
+          className="circle-input"
+          type="color"
+          onChange={handleColor}
+          onFocus={saveColor}
+          value={color}
+          disabled={!changable}
+        />
+      </div>
       <div className="category-name">
-        {renamable ? (
+        {changable ? (
           <RenamableText
             content={name}
             minLength={1}
             maxLength={15}
             onSave={async (text) => {
-              await (actor || ICP_backend).updateCategory(id, text, color);
+              await (await getActor()).updateCategory(id, text, color);
             }}
           />
         ) : (

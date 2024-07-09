@@ -1,4 +1,3 @@
-import { ICP_backend } from "../../../declarations/ICP_backend";
 import NoteHeader from "../Components/NoteHeader";
 import NoteEditor from "../Components/NoteEditor";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -13,13 +12,13 @@ function NoteRoute() {
     category: [],
   });
   const [searchParams] = useSearchParams();
-  const { actor } = useAuth();
+  const { getActor } = useAuth();
   const navigate = useNavigate();
 
   const initializeNote = async () => {
-    const targetNote = await (actor ?? ICP_backend).getNote(
-      +searchParams.get("id")
-    );
+    const targetNote = await (
+      await getActor()
+    ).getNote(+searchParams.get("id"));
     if (targetNote.length === 0) {
       navigate(`/app?canisterId=${process.env.CANISTER_ID}`);
       return;

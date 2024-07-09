@@ -40,6 +40,7 @@ input {
 .renamable-input {
   background-color: transparent;
   border: 1px solid white;
+  border: none;
   border-radius: 0.25em;
   color: white;
   font-size: 1em;
@@ -51,5 +52,10 @@ input {
 }
 
 .hidden-span {
+  position: absolute;
   visibility: hidden;
+}
+
+.balls {
+  margin-top: -2em;
 }

@@ -1,16 +1,21 @@
 import { useAuth } from "../AuthContext";
-import { ICP_backend } from "../../../declarations/ICP_backend";
 import { useNavigate } from "react-router-dom";
 
-
 function NewNoteButton() {
-    const { actor } = useAuth();
-    const navigate = useNavigate();
+  const { getActor } = useAuth();
+  const navigate = useNavigate();
 
-    return <div className="new-note-btn button glass" onClick={async () => {
-        const noteId = await (actor ?? ICP_backend).createNote("New Note", "", []);
+  return (
+    <div
+      className="new-note-btn button glass"
+      onClick={async () => {
+        const noteId = await (await getActor()).createNote("New Note", "", []);
         navigate(`/note?canisterId=${process.env.CANISTER_ID}&id=${noteId}`);
-    }}>+</div>
+      }}
+    >
+      +
+    </div>
+  );
 }
 
-export default NewNoteButton
+export default NewNoteButton;

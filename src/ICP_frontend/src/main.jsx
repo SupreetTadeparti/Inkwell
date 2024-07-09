@@ -7,12 +7,12 @@ import "./index.css";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { ParallaxProvider } from "react-scroll-parallax";
 import { AuthProvider } from "./AuthContext";
-import { CookiesProvider } from "react-cookie";
+import { ToastContainer } from "react-toastify";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <CookiesProvider>
     <AuthProvider>
       <ParallaxProvider>
+        <ToastContainer />
         <Router>
           <Routes>
             <Route path="/" element={<LandingRoute />} />
@@ -22,5 +22,4 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         </Router>
       </ParallaxProvider>
     </AuthProvider>
-  </CookiesProvider>
 );

@@ -34,23 +34,23 @@ function LandingRoute() {
           </div>
         </section>
         <section className="content-section">
-          <div className="four-notes glass">
+          <div className="four-notes">
             <div className="note"></div>
             <div className="note"></div>
             <div className="note"></div>
             <div className="note"></div>
           </div>
           <SectionContent
-            heading="Sort categories with colors"
-            content="Easily organize your notes based on colors to separate different topics. Lorem ipsum dolor sit amet."
+            heading="Organize with colors"
+            content="Use color-based categories to separate topics. This helps with easy visual identification and organization. Assign a unique color to each category and keep all your notes sorted in one place. This approach enhances productivity and reduces the time spent searching for important details."
           />
         </section>
         <section className="content-section">
           <SectionContent
             heading="We value your Privacy and Security"
-            content="We use the latest Blockchain technology to keep your data safe and secure. Lorem ipsum dolor sit amet."
+            content="We use the latest Blockchain technology to keep your data safe and secure. This ensures that your information is protected by a decentralized system, making unauthorized access impossible. No one else can access your notes, not even us."
           />
-          <div className="security-image glass">
+          <div className="security-image">
             <Lock />
           </div>
         </section>

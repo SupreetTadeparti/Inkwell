@@ -1,5 +1,5 @@
-import { ICP_backend } from "../../../declarations/ICP_backend";
 import { useEffect, useState, useRef } from "react";
+import backImg from "../assets/img/back.svg";
 import { useAuth } from "../AuthContext";
 import CategoryTab from "./CategoryTab";
 import SearchBar from "./SearchBar";
@@ -10,22 +10,29 @@ function FilterBar({ allNotes, setNotes, setSearchText }) {
   const [selectedIdx, setSelectedIdx] = useState(0);
   const [categories, setCategories] = useState([]);
   const scrollContainerRef = useRef(null);
-  const { actor } = useAuth();
+  const { getActor } = useAuth();
+
+  const generateRandomHexColor = () => {
+    return (
+      "#" +
+      Math.floor(Math.random() * 16777215)
+        .toString(16)
+        .padStart(6, "0")
+    );
+  };
 
   async function getCategories() {
     setCategories([
-      { name: "All", color: "white", all: true },
-      ...(await (actor ?? ICP_backend).getCategories()),
+      { name: "All", color: "#ffffff", all: true },
+      ...(await (await getActor()).getCategories()),
     ]);
+    checkScrollPosition();
   }
 
   async function createCategory() {
-    await (actor ?? ICP_backend).createCategory(
-      "New Category",
-      `rgb(${Math.floor(Math.random() * 255)}, ${Math.floor(
-        Math.random() * 255
-      )}, ${Math.floor(Math.random() * 255)})`
-    );
+    await (
+      await getActor()
+    ).createCategory("New Category", generateRandomHexColor());
     getCategories();
   }
 
@@ -48,13 +55,12 @@ function FilterBar({ allNotes, setNotes, setSearchText }) {
       } else {
         container.scrollBy({ left: scrollAmount, behavior: "smooth" });
       }
-      setTimeout(checkScrollPosition, 300);
+      setTimeout(checkScrollPosition, 800);
     }
   };
 
   useEffect(() => {
     getCategories();
-    checkScrollPosition();
     window.addEventListener("resize", checkScrollPosition);
     return () => window.removeEventListener("resize", checkScrollPosition);
   }, []);
@@ -67,12 +73,10 @@ function FilterBar({ allNotes, setNotes, setSearchText }) {
       <div className="categories-container">
         <div className="categories">
           <button
-            className={`categories__left-arrow ${
-              !isLeftVisible ? "hidden" : ""
-            }`}
+            className={`categories__arrow ${!isLeftVisible ? "hidden" : ""}`}
             onClick={() => scroll("left")}
           >
-            &lt;
+            <img src={backImg} alt="back button" />
           </button>
           <div className="categories__main" ref={scrollContainerRef}>
             {categories.map((category, idx) => (
@@ -80,14 +84,17 @@ function FilterBar({ allNotes, setNotes, setSearchText }) {
                 key={idx}
                 id={category.id}
                 name={category.name}
-                color={category.color}
+                clr={category.color}
                 isSelected={selectedIdx === idx}
-                renamable={category.all !== true}
+                changable={category.all !== true}
                 click={() => {
                   setSelectedIdx(idx);
                   setNotes(
                     allNotes.filter(
-                      (note) => category.all || note.category.id === category.id
+                      (note) =>
+                        category.all ||
+                        (note.category.length > 0 &&
+                          note.category[0].id === category.id)
                     )
                   );
                 }}
@@ -98,12 +105,12 @@ function FilterBar({ allNotes, setNotes, setSearchText }) {
             </div>
           </div>
           <button
-            className={`categories__right-arrow ${
+            className={`categories__arrow right ${
               !isRightVisible ? "hidden" : ""
             }`}
             onClick={() => scroll("right")}
           >
-            &gt;
+            <img src={backImg} alt="next button" />
           </button>
         </div>
       </div>

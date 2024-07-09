@@ -8,7 +8,9 @@ function Notes({ notes }) {
           id={note.id}
           title={note.title}
           content={note.content}
-          color={note.category?.color ?? "white"}
+          color={
+            note.category.length !== 0 ? note.category[0].color : "#ffffff"
+          }
         />
       ))}
     </div>

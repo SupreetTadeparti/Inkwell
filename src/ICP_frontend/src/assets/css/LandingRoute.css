@@ -24,7 +24,7 @@
   gap: 1.5em;
 }
 
-.navbar-links>* {
+.navbar-links > * {
   cursor: pointer;
   color: var(--text);
   text-decoration: none;
@@ -33,7 +33,7 @@
   transition: transform 50ms ease-out;
 }
 
-.navbar-links>*:hover {
+.navbar-links > *:hover {
   transform: scale(1.05);
 }
 
@@ -43,14 +43,13 @@
   justify-content: center;
 }
 
-
 .note-sample {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   width: 80%;
-  height: 25em;
+  height: 32em;
   position: relative;
   z-index: 1;
   margin: 0 auto;
@@ -62,7 +61,6 @@
   line-height: 1.1;
   font-weight: 500;
   display: inline-block;
-  white-space: nowrap;
   overflow: hidden;
   color: white;
 }
@@ -87,13 +85,14 @@
   margin: 0 auto;
   position: relative;
   display: flex;
-  justify-content: space-between;
-  gap: .5em;
-  padding-top: 10em;
+  justify-content: space-around;
+  gap: 0.5em;
+  margin-top: 10em;
+  padding: 1em;
 }
 
 .sort-category-section {
-  height:8em;
+  height: 8em;
 }
 
 .four-notes {
@@ -110,7 +109,7 @@
   height: 8em;
   transform: rotate(-10deg);
   box-shadow: 3px 3px 10px 1px rgba(0, 0, 0, 0.3);
-  border-radius: .25em;
+  border-radius: 0.25em;
   transition: transform 125ms ease-out;
 }
 
@@ -160,8 +159,27 @@
   width: 20em;
 }
 
-.lock>img {
+.lock > img {
   width: 65%;
+}
+
+.lock > img:hover {
+  animation: shake 0.3s;
+}
+
+@keyframes shake {
+  0% {
+    transform: translate(0px, 0px) rotate(0deg);
+  }
+  30% {
+    transform: translate(5px, 0px) rotate(0deg);
+  }
+  70% {
+    transform: translate(-5px, 0px) rotate(0deg);
+  }
+  100% {
+    transform: translate(0px, 0px) rotate(0deg);
+  }
 }
 
 .section-content-container {
@@ -181,12 +199,14 @@
 
 .section-content__heading {
   color: white;
-  font-size: 1.8em;
+  font-size: 2em;
 }
 
 .section-content__content {
   color: white;
   font-weight: 300;
+  font-size: 1.1em;
+  text-indent: 2em;
 }
 
 .midground {
@@ -198,13 +218,13 @@
   z-index: -1;
 }
 
-
 footer {
   margin: 0 auto;
   width: 80%;
   background-color: rgb(255, 255, 255, 0.5);
   color: black;
   margin-top: 10em;
+  margin-bottom: 2em;
   padding: 1em;
   display: flex;
   justify-content: space-between;

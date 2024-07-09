@@ -1,4 +1,3 @@
-import { ICP_backend } from "../../../declarations/ICP_backend";
 import BallsBackground from "../Components/BallsBackground";
 import FilterBar from "../Components/FilterBar";
 import { useNavigate } from "react-router-dom";
@@ -12,22 +11,24 @@ function HomeRoute() {
   const [allNotes, setAllNotes] = useState([]);
   const [notes, setNotes] = useState([]);
   const [searchText, setSearchText] = useState("");
-  const { actor, authenticated } = useAuth();
+  const { authenticated, getActor } = useAuth();
   const navigate = useNavigate();
 
   async function initializeNotes() {
-    let userNotes = await (actor ?? ICP_backend).getNotes();
+    let userNotes = await (await getActor()).getNotes();
     setAllNotes(userNotes);
     setNotes(userNotes);
   }
 
   useEffect(() => {
-    initializeNotes();
-  }, []);
+    if (authenticated) {
+      initializeNotes();
+    } else if (authenticated === false) {
+      navigate(`/?canisterId=${process.env.CANISTER_ID}`);
+    }
+  }, [authenticated]);
 
   if (authenticated === null) return <>Loading...</>;
-
-  // if (authenticated === false) navigate(`/?canisterId=${process.env.CANISTER_ID}`)
 
   return (
     <div className="home-container">
@@ -39,7 +40,17 @@ function HomeRoute() {
         setNotes={setNotes}
         setSearchText={setSearchText}
       />
-      <Notes notes={notes.filter((note) => note.title.includes(searchText))} />
+      <Notes
+        notes={
+          notes
+            ? notes
+                .filter((note) =>
+                  note.title.toLowerCase().includes(searchText.toLowerCase())
+                )
+                .reverse()
+            : []
+        }
+      />
     </div>
   );
 }

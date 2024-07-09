@@ -1,6 +1,11 @@
-import HashMap "mo:base/HashMap";
 import Principal "mo:base/Principal";
+import HashMap "mo:base/HashMap";
+import Option "mo:base/Option";
 import Buffer "mo:base/Buffer";
+import Array "mo:base/Array";
+import Text "mo:base/Text";
+import Hash "mo:base/Hash";
+import Nat "mo:base/Nat";
 
 actor {
 
@@ -18,12 +23,23 @@ actor {
     color : Text;
   };
 
+  type AccessLevel = {
+    #ReadOnly;
+    #ReadWrite;
+  };
+
+  type SharedNoteAccess = {
+    sharedWith : Principal;
+    accessLevel : AccessLevel;
+  };
+
   type Note = {
     id : Nat;
     owner : Principal;
     var title : Text;
     var content : Text;
     var category : ?SharedCategory;
+    var sharedAccess : Buffer.Buffer<SharedNoteAccess>;
   };
 
   type SharedNote = {
@@ -32,10 +48,12 @@ actor {
     title : Text;
     content : Text;
     category : ?SharedCategory;
+    sharedAccess : [SharedNoteAccess];
   };
 
   var noteId : Nat = 0;
   var categoryId : Nat = 0;
+  var shareIdCounter : Nat = 0;
 
   private let notesRecord : HashMap.HashMap<Principal, Buffer.Buffer<Note>> = HashMap.HashMap<Principal, Buffer.Buffer<Note>>(
     0,
@@ -49,13 +67,11 @@ actor {
     Principal.hash,
   );
 
-  private func noteEqual(a : Note, b : Note) : Bool {
-    a.id == b.id;
-  };
-
-  private func categoryEqual(a : Category, b : Category) : Bool {
-    a.id == b.id;
-  };
+  private let shareIdToPrincipal : HashMap.HashMap<Nat, Principal> = HashMap.HashMap<Nat, Principal>(
+    0,
+    Nat.equal,
+    Hash.hash,
+  );
 
   private func noteToSharedNote(note : Note) : SharedNote {
     {
@@ -64,6 +80,7 @@ actor {
       title = note.title;
       content = note.content;
       category = note.category;
+      sharedAccess = Buffer.toArray(note.sharedAccess);
     };
   };
 
@@ -76,6 +93,42 @@ actor {
     };
   };
 
+  private func addNoteToBuffer(user : Principal, note : Note) {
+    let notes : ?Buffer.Buffer<Note> = notesRecord.get(user);
+
+    switch (notes) {
+      case (null) {
+        let newNoteBuffer : Buffer.Buffer<Note> = Buffer.Buffer<Note>(1);
+        newNoteBuffer.add(note);
+        notesRecord.put(user, newNoteBuffer);
+      };
+      case (?noteBuffer) {
+        noteBuffer.add(note);
+      };
+    };
+  };
+
+  private func removeNoteFromBuffer(user : Principal, noteId : Nat, caller : ?Principal) {
+    let notes : ?Buffer.Buffer<Note> = notesRecord.get(user);
+
+    let owner : Principal = Option.get(caller, user);
+
+    switch (notes) {
+      case (null) {};
+      case (?noteBuffer) {
+        var i = 0;
+        label bufferLoop while (i < noteBuffer.size()) {
+          let note = noteBuffer.get(i);
+          if (note.id == noteId and note.owner == owner) {
+            let _dont_delete_me = noteBuffer.remove(i);
+            break bufferLoop;
+          };
+          i += 1;
+        };
+      };
+    };
+  };
+
   // Create
 
   public shared (msg) func createNote(title : Text, content : Text, category : ?SharedCategory) : async Nat {
@@ -85,23 +138,12 @@ actor {
       var title = title;
       var content = content;
       var category = category;
+      var sharedAccess = Buffer.Buffer<SharedNoteAccess>(0);
     };
 
     noteId += 1;
 
-    let notes : ?Buffer.Buffer<Note> = notesRecord.get(msg.caller);
-
-    switch (notes) {
-      case (null) {
-        let newNoteBuffer : Buffer.Buffer<Note> = Buffer.Buffer<Note>(1);
-        newNoteBuffer.add(note);
-        notesRecord.put(msg.caller, newNoteBuffer);
-      };
-      case (?noteBuffer) {
-        noteBuffer.add(note);
-        notesRecord.put(msg.caller, noteBuffer);
-      };
-    };
+    addNoteToBuffer(msg.caller, note);
 
     noteId - 1;
   };
@@ -126,54 +168,44 @@ actor {
       };
       case (?categoryBuffer) {
         categoryBuffer.add(category);
-        categoryRecord.put(msg.caller, categoryBuffer);
       };
     };
   };
 
   // Read
-
   public shared query (msg) func getNotes() : async [SharedNote] {
-    let notes : ?Buffer.Buffer<Note> = notesRecord.get(msg.caller);
-
-    switch (notes) {
-      case (null) {
-        return [];
-      };
-      case (?noteBuffer) {
-        return Buffer.toArray(Buffer.map<Note, SharedNote>(noteBuffer, noteToSharedNote));
-      };
+    let notes = switch (notesRecord.get(msg.caller)) {
+      case (null) { [] };
+      case (?noteBuffer) { Buffer.toArray(noteBuffer) };
     };
+
+    Array.map<Note, SharedNote>(
+      notes,
+      noteToSharedNote,
+    );
   };
 
   public shared query (msg) func getCategories() : async [SharedCategory] {
-    let categories : ?Buffer.Buffer<Category> = categoryRecord.get(msg.caller);
-
-    switch (categories) {
-      case (null) {
-        return [];
-      };
-      case (?categoryBuffer) {
-        return Buffer.toArray(Buffer.map<Category, SharedCategory>(categoryBuffer, categoryToSharedCategory));
-      };
+    let categories = switch (categoryRecord.get(msg.caller)) {
+      case (null) { [] };
+      case (?categoryBuffer) { Buffer.toArray(categoryBuffer) };
     };
+
+    Array.map<Category, SharedCategory>(
+      categories,
+      categoryToSharedCategory,
+    );
   };
 
   public shared query (msg) func getNote(id : Nat) : async ?SharedNote {
-    let notes : ?Buffer.Buffer<Note> = notesRecord.get(msg.caller);
+    let note = getInternalNote(msg.caller, id);
 
-    switch (notes) {
+    switch (note) {
       case (null) {
-        return null;
+        null;
       };
-      case (?noteBuffer) {
-        for (note in noteBuffer.vals()) {
-          if (note.id == id) {
-            assert note.owner == msg.caller;
-            return ?noteToSharedNote(note);
-          };
-        };
-        return null;
+      case (?foundNote) {
+        ?noteToSharedNote(foundNote);
       };
     };
   };
@@ -217,7 +249,7 @@ actor {
   };
 
   // Update
-  public shared (msg) func updateNote(id : Nat, title : ?Text, content : ?Text, category : ?SharedCategory) : async () {
+  public shared (msg) func updateNote(id : Nat, title : Text, content : Text, category : ?SharedCategory) : async () {
     let note : ?Note = getInternalNote(msg.caller, id);
 
     switch (note) {
@@ -225,21 +257,18 @@ actor {
         return;
       };
       case (?noteToUpdate) {
-        switch (title) {
-          case (null) {};
-          case (?newTitle) {
-            noteToUpdate.title := newTitle;
-          };
+        if (
+          noteToUpdate.owner == msg.caller or Array.find<SharedNoteAccess>(
+            Buffer.toArray(noteToUpdate.sharedAccess),
+            func(access : SharedNoteAccess) : Bool {
+              access.sharedWith == msg.caller and access.accessLevel == #ReadWrite;
+            },
+          ) != null
+        ) {
+          noteToUpdate.title := title;
+          noteToUpdate.content := content;
+          noteToUpdate.category := category;
         };
-
-        switch (content) {
-          case (null) {};
-          case (?newContent) {
-            noteToUpdate.content := newContent;
-          };
-        };
-
-        noteToUpdate.category := category;
       };
     };
   };
@@ -259,20 +288,9 @@ actor {
   };
 
   // Delete
-  public shared (msg) func deleteNote(id : Nat) : async () {
-    let notes : ?Buffer.Buffer<Note> = notesRecord.get(msg.caller);
 
-    switch (notes) {
-      case (null) {};
-      case (?noteBuffer) {
-        for (note in noteBuffer.vals()) {
-          if (note.id == id) {
-            assert note.owner == msg.caller;
-            let _dont_delete_me = Buffer.indexOf<Note>(note, noteBuffer, noteEqual);
-          };
-        };
-      };
-    };
+  public shared (msg) func deleteNote(id : Nat) : async () {
+    removeNoteFromBuffer(msg.caller, id, null);
   };
 
   public shared (msg) func deleteCategory(id : Nat) : async () {
@@ -281,12 +299,106 @@ actor {
     switch (categories) {
       case (null) {};
       case (?categoryBuffer) {
-        let index = Buffer.indexOf<Category>({ id = id; owner = msg.caller; var name = ""; var color = "" }, categoryBuffer, categoryEqual);
-        switch (index) {
-          case (null) {};
-          case (?i) {
-            let removedCategory = categoryBuffer.remove(i);
-            assert removedCategory.owner == msg.caller;
+        var i = 0;
+        while (i < categoryBuffer.size()) {
+          let category = categoryBuffer.get(i);
+          if (category.id == id and category.owner == msg.caller) {
+            let _dont_delete_me = categoryBuffer.remove(i);
+            return;
+          };
+          i += 1;
+        };
+      };
+    };
+  };
+
+  // Share
+
+  public shared (msg) func generateShareId() : async Nat {
+    var existingShareId : ?Nat = null;
+
+    for (id in shareIdToPrincipal.keys()) {
+      if (shareIdToPrincipal.get(id) == ?msg.caller) {
+        existingShareId := ?id;
+      };
+    };
+
+    switch (existingShareId) {
+      case (?id) {
+        return id;
+      };
+      case (null) {
+        let newShareId = shareIdCounter;
+        shareIdCounter += 1;
+        shareIdToPrincipal.put(newShareId, msg.caller);
+        return newShareId;
+      };
+    };
+  };
+
+  public shared (msg) func shareNote(noteId : Nat, shareId : Nat, accessLevel : AccessLevel) : async () {
+    var principalOpt = shareIdToPrincipal.get(shareId);
+
+    if (principalOpt == null) {
+      let newShareId = await generateShareId();
+      principalOpt := shareIdToPrincipal.get(newShareId);
+    };
+
+    switch (principalOpt) {
+      case (null) {
+        return;
+      };
+      case (?sharedWith) {
+        let note : ?Note = getInternalNote(msg.caller, noteId);
+
+        switch (note) {
+          case (null) {
+            return;
+          };
+          case (?noteToShare) {
+            let newAccess : SharedNoteAccess = {
+              sharedWith = sharedWith;
+              accessLevel = accessLevel;
+            };
+            noteToShare.sharedAccess.add(newAccess);
+
+            addNoteToBuffer(sharedWith, noteToShare);
+          };
+        };
+      };
+    };
+  };
+
+  public shared (msg) func unshareNote(noteId : Nat, shareId : Nat) : async () {
+    var principalOpt = shareIdToPrincipal.get(shareId);
+
+    if (principalOpt == null) {
+      let newShareId = await generateShareId();
+      principalOpt := shareIdToPrincipal.get(newShareId);
+    };
+
+    switch (principalOpt) {
+      case (null) {
+        return;
+      };
+      case (?sharedWith) {
+        let note : ?Note = getInternalNote(msg.caller, noteId);
+
+        switch (note) {
+          case (null) {
+            return;
+          };
+          case (?noteToUnshare) {
+            let updatedSharedAccess = Array.filter<SharedNoteAccess>(
+              Buffer.toArray(noteToUnshare.sharedAccess),
+              func(access : SharedNoteAccess) : Bool {
+                access.sharedWith != sharedWith;
+              },
+            );
+
+            noteToUnshare.sharedAccess := Buffer.fromArray<SharedNoteAccess>(updatedSharedAccess);
+
+            removeNoteFromBuffer(sharedWith, noteId, ?msg.caller);
           };
         };
       };

@@ -1,53 +1,104 @@
-import React from 'react';
-import { useState } from 'react';
+import React from "react";
+import { useState, useEffect, useRef } from "react";
+import { useAuth } from "../AuthContext";
 
-const CategorySelector = ({note, setNote}) => {
-    const [mode, setMode] = useState(true);
+const CategorySelector = ({ note, setNote }) => {
+  const allCategory = { name: "All", color: "#ffffff", id: -1, all: true };
+  const [mode, setMode] = useState(true);
+  const [categories, setCategories] = useState([]);
+  const [isOpen, setIsOpen] = useState(false);
+  const { getActor } = useAuth();
+  const [selectedCategory, setSelectedCategory] = useState(
+    note.category.length === 0 ? allCategory : note.category[0]
+  );
+  const containerRef = useRef(null);
+
+  useEffect(() => {
+    if (note.category.length !== 0) {
+      setSelectedCategory(note.category[0]);
+    }
+  }, [note]);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(event.target)
+      ) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  const toggleDropdown = () => {
+    setIsOpen(!isOpen);
+  };
+
+  const handleSelect = (category) => {
+    setSelectedCategory(category);
+    setIsOpen(false);
+    if (category.id === -1) {
+      category = [];
+    }
+    setNote({ ...note, category: [category] });
+    setMode(true); // Close the dropdown and switch back to display mode
+  };
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const fetchedCategories = await (await getActor()).getCategories();
+        setCategories([allCategory, ...fetchedCategories]);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+        setCategories([allCategory]); // Fallback to default
+      }
+    })();
+  }, []);
 
   return (
-    mode ? (
     <div
-        className="category-name"
-        onDoubleClick={() => setMode(false)}
-        style={{
-        backgroundColor:
-            note.category.length === 0 ? "white" : note.category.color,
-        color: note.category.length === 0 ? "black" : "white",
-        }}
+      className="category-name custom-select-container"
+      ref={containerRef}
+      style={{
+        "--clr": selectedCategory.color,
+        backgroundColor: selectedCategory.color,
+      }}
     >
-        {note.category.length === 0 ? "All" : note.category.name}
-    </div>
-    ) : (
-    <div id="select-box"
-    onKeyDown={(e) => {
-        if (e.key === "Escape") {
-          setMode(true);
-          return;
-        }
-      }}>
-        <input type="checkbox" id="options-view-button" />
-        <div id="select-button" class="brd">
-          <div id="selected-value">
-            <span>Select a platform</span>
-          </div>
-          <div id="chevrons">
-            <i class="fas fa-chevron-up"></i>
-            <i class="fas fa-chevron-down"></i>
-          </div>
+      <div
+        className="selected-value"
+        onClick={toggleDropdown}
+        style={{
+          color: selectedCategory.color === "#ffffff" ? "black" : "#ffffff",
+        }}
+      >
+        {selectedCategory.name}
+      </div>
+      {isOpen && (
+        <div className="options-list">
+          {categories.map((category) => (
+            <div
+              key={category.id}
+              className="option"
+              onClick={() => handleSelect(category)}
+            >
+              <div
+                className="circle"
+                style={{
+                  backgroundColor: category.color,
+                }}
+              ></div>
+              <div className="option-name">{category.name}</div>
+            </div>
+          ))}
         </div>
-        <div id="options">
-          <div class="option">
-            <input class="s-c top" type="radio" name="platform" value="codepen"/>
-            <input class="s-c bottom" type="radio" name="platform" value="codepen"/>
-            <i class="fab fa-codepen"></i>
-            <span class="label">CodePen</span>
-            <span class="opt-val">CodePen</span>
-          </div>
-          <div id="option-bg"></div>
-        </div>
+      )}
     </div>
-    )
   );
-}
+};
 
 export default CategorySelector;

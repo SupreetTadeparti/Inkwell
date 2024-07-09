@@ -1,14 +1,20 @@
-import { ICP_backend } from "../../../declarations/ICP_backend";
 import backIcon from "../assets/img/back.svg";
+import shareIcon from "../assets/img/share.svg";
 import saveIcon from "../assets/img/save.svg";
 import trashIcon from "../assets/img/trash.svg";
 import RenamableText from "./RenamableText";
 import CategorySelector from "./CategorySelector";
 import { useAuth } from "../AuthContext";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+const notify = (msg) => {
+  toast(msg, { position: "top-center" });
+};
 
 const NoteHeader = ({ note, setNote }) => {
-  const { actor } = useAuth();
+  const { getActor } = useAuth();
   const navigate = useNavigate();
 
   return (
@@ -24,8 +30,7 @@ const NoteHeader = ({ note, setNote }) => {
         </div>
       </div>
       <div className="note-details center">
-        <CategorySelector note={note} setNote={setNote} />
-        /
+        <CategorySelector note={note} setNote={setNote} />/
         <h1 className="note-title">
           <RenamableText
             minLength={1}
@@ -33,49 +38,56 @@ const NoteHeader = ({ note, setNote }) => {
             content={note.title}
             onSave={async (title) => {
               if (note.id === null) return;
-              await (actor || ICP_backend).updateNote(
-                note.id,
-                title,
-                note.content,
-                note.category
-              );
+              await (
+                await getActor()
+              ).updateNote(note.id, title, note.content, note.category);
               setNote((prev) => ({ ...prev, title: title }));
             }}
           />
         </h1>
       </div>
-      <div className='top-buttons'>
+      <div className="top-buttons">
+        <div className="center">
+          <div className="note-btn button">
+            <img src={shareIcon} alt="" />
+            <div className="btn__name">Share</div>
+          </div>
+        </div>
         <div className="center">
           <div
-            className="save-btn button"
+            className="note-btn button"
             onClick={async () => {
-              await (actor || ICP_backend).updateNote(
+              console.log(note.category);
+              await (
+                await getActor()
+              ).updateNote(
                 note.id,
                 note.title,
                 note.content,
-                note.category
+                note.category ? note.category : []
               );
+              notify("Successfully saved!");
             }}
           >
-            <img src={saveIcon} />
-            <div className="save-name">Save</div>
+            <img src={saveIcon} alt="" />
+            <div className="btn__name">Save</div>
           </div>
         </div>
 
         <div className="center">
           <div
-            className="delete-btn button"
+            className="note-btn button"
             onClick={async () => {
-              await (actor || ICP_backend).deleteNote(note.id);
+              await (await getActor()).deleteNote(note.id);
               navigate(`/app?canisterId=${process.env.CANISTER_ID}`);
+              notify("Successfully deleted!");
             }}
           >
-            <img src={trashIcon} className="trash-img" />
-            <div className="delete-name">Delete</div>
+            <img src={trashIcon} alt="" className="trash-img" />
+            <div className="btn__name">Delete</div>
           </div>
         </div>
       </div>
-
     </div>
   );
 };
