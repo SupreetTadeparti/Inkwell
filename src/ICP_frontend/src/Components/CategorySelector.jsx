@@ -7,7 +7,7 @@ const CategorySelector = ({ note, setNote }) => {
   const [mode, setMode] = useState(true);
   const [categories, setCategories] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
-  const { getActor } = useAuth();
+  const { authenticated, getActor } = useAuth();
   const [selectedCategory, setSelectedCategory] = useState(
     note.category.length === 0 ? allCategory : note.category[0]
   );
@@ -49,6 +49,11 @@ const CategorySelector = ({ note, setNote }) => {
   };
 
   useEffect(() => {
+    if (authenticated === null) return;
+
+    if (authenticated === false)
+      return navigate(`/?canisterId=${process.env.CANISTER_ID}`);
+
     (async () => {
       try {
         const fetchedCategories = await (await getActor()).getCategories();
@@ -58,11 +63,11 @@ const CategorySelector = ({ note, setNote }) => {
         setCategories([allCategory]); // Fallback to default
       }
     })();
-  }, []);
+  }, [authenticated]);
 
   return (
     <div
-      className="category-name custom-select-container"
+      className="custom-select-container"
       ref={containerRef}
       style={{
         "--clr": selectedCategory.color,

@@ -1,6 +1,6 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
 import { createActor } from "../../declarations/ICP_backend";
-import { AuthClient, LocalStorage } from "@dfinity/auth-client";
+import { AuthClient } from "@dfinity/auth-client";
 import { HttpAgent } from "@dfinity/agent";
 
 const AuthContext = createContext(null);

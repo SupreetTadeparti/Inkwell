@@ -12,23 +12,28 @@ function NoteRoute() {
     category: [],
   });
   const [searchParams] = useSearchParams();
-  const { getActor } = useAuth();
+  const { getActor, authenticated } = useAuth();
   const navigate = useNavigate();
 
   const initializeNote = async () => {
     const targetNote = await (
       await getActor()
     ).getNote(+searchParams.get("id"));
+
     if (targetNote.length === 0) {
       navigate(`/app?canisterId=${process.env.CANISTER_ID}`);
       return;
     }
+
     setNote(targetNote[0]);
   };
 
   useEffect(() => {
+    if (authenticated === null) return;
+    if (authenticated === false)
+      return navigate(`/?canisterId=${process.env.CANISTER_ID}`);
     initializeNote();
-  }, []);
+  }, [authenticated]);
 
   return (
     <div className="note-container">
