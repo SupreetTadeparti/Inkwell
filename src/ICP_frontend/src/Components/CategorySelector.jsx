@@ -20,6 +20,8 @@ const CategorySelector = ({ note, setNote, isOwner }) => {
   const containerRef = useRef(null);
   const navigate = useNavigate();
 
+  console.log(note.category);
+
   useEffect(() => {
     if (authenticated !== null && !isOwner) setSelectedCategory(sharedCategory);
     else if (note.category.length !== 0) {
@@ -53,9 +55,10 @@ const CategorySelector = ({ note, setNote, isOwner }) => {
     setSelectedCategory(category);
     setIsOpen(false);
     if (category.id === -1) {
-      category = [];
+      setNote({ ...note, category: [] });
+    } else {
+      setNote({ ...note, category: [category] });
     }
-    setNote({ ...note, category: [category] });
   };
 
   useEffect(() => {
