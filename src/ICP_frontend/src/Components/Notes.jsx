@@ -1,16 +1,13 @@
 import NotePreview from "./NotePreview";
 
-function Notes({ notes }) {
+function Notes({ notes, removeNoteFromState }) {
   return (
     <div className="notes-container">
       {notes.map((note) => (
         <NotePreview
-          id={note.id}
-          title={note.title}
-          content={note.content}
-          color={
-            note.category.length !== 0 ? note.category[0].color : "#ffffff"
-          }
+          key={note.id}
+          note={note}
+          removeNoteFromState={removeNoteFromState}
         />
       ))}
     </div>

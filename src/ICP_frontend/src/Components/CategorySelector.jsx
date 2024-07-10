@@ -1,10 +1,16 @@
 import React from "react";
 import { useState, useEffect, useRef } from "react";
 import { useAuth } from "../AuthContext";
+import { useNavigate } from "react-router-dom";
 
-const CategorySelector = ({ note, setNote }) => {
+const CategorySelector = ({ note, setNote, isOwner }) => {
   const allCategory = { name: "All", color: "#ffffff", id: -1, all: true };
-  const [mode, setMode] = useState(true);
+  const sharedCategory = {
+    name: "Shared",
+    color: "#000000",
+    id: -1,
+    shared: true,
+  };
   const [categories, setCategories] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
   const { authenticated, getActor } = useAuth();
@@ -12,12 +18,16 @@ const CategorySelector = ({ note, setNote }) => {
     note.category.length === 0 ? allCategory : note.category[0]
   );
   const containerRef = useRef(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    if (note.category.length !== 0) {
+    if (authenticated !== null && !isOwner) setSelectedCategory(sharedCategory);
+    else if (note.category.length !== 0) {
       setSelectedCategory(note.category[0]);
+    } else {
+      setSelectedCategory(allCategory);
     }
-  }, [note]);
+  }, [note, isOwner]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -35,6 +45,7 @@ const CategorySelector = ({ note, setNote }) => {
   }, []);
 
   const toggleDropdown = () => {
+    if (!isOwner) return;
     setIsOpen(!isOpen);
   };
 
@@ -45,7 +56,6 @@ const CategorySelector = ({ note, setNote }) => {
       category = [];
     }
     setNote({ ...note, category: [category] });
-    setMode(true); // Close the dropdown and switch back to display mode
   };
 
   useEffect(() => {

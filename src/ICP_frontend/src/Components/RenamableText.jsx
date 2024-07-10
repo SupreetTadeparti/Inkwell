@@ -59,6 +59,11 @@ function RenamableText({ content, onSave, minLength, maxLength }) {
             return;
           }
         }}
+        onBlur={() => {
+          setMode(true);
+          onSave(text);
+          return;
+        }}
         onChange={(e) => setText(e.target.value)}
         maxLength={maxLength}
         minLength={minLength}

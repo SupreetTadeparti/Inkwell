@@ -1,7 +1,7 @@
 import { useParallax } from "react-scroll-parallax";
 
 function BallsBackground({ parallax }) {
-  const { ref } = useParallax({ speed: 10 });
+  const { ref } = useParallax({ speed: 15 });
 
   return (
     <div className="midground">

@@ -28,6 +28,11 @@ actor {
     #ReadWrite;
   };
 
+  type OperationResult = {
+    #Success;
+    #Failure : Text;
+  };
+
   type SharedNoteAccess = {
     sharedWith : Principal;
     accessLevel : AccessLevel;
@@ -108,23 +113,26 @@ actor {
     };
   };
 
-  private func removeNoteFromBuffer(user : Principal, noteId : Nat, caller : ?Principal) {
+  private func removeNoteFromBuffer(user : Principal, noteId : Nat, caller : ?Principal) : OperationResult {
     let notes : ?Buffer.Buffer<Note> = notesRecord.get(user);
 
     let owner : Principal = Option.get(caller, user);
 
     switch (notes) {
-      case (null) {};
+      case (null) {
+        return #Failure("Note not found");
+      };
       case (?noteBuffer) {
         var i = 0;
-        label bufferLoop while (i < noteBuffer.size()) {
+        while (i < noteBuffer.size()) {
           let note = noteBuffer.get(i);
           if (note.id == noteId and note.owner == owner) {
             let _dont_delete_me = noteBuffer.remove(i);
-            break bufferLoop;
+            return #Success;
           };
           i += 1;
         };
+        return #Failure("Only the owner can delete the note");
       };
     };
   };
@@ -220,7 +228,12 @@ actor {
       case (?noteBuffer) {
         for (note in noteBuffer.vals()) {
           if (note.id == id) {
-            assert note.owner == caller;
+            assert note.owner == caller or Array.find<SharedNoteAccess>(
+              Buffer.toArray(note.sharedAccess),
+              func(access : SharedNoteAccess) : Bool {
+                access.sharedWith == caller;
+              },
+            ) != null;
             return ?note;
           };
         };
@@ -249,12 +262,12 @@ actor {
   };
 
   // Update
-  public shared (msg) func updateNote(id : Nat, title : Text, content : Text, category : ?SharedCategory) : async () {
+  public shared (msg) func updateNote(id : Nat, title : Text, content : Text, category : ?SharedCategory) : async OperationResult {
     let note : ?Note = getInternalNote(msg.caller, id);
 
     switch (note) {
       case (null) {
-        return;
+        return #Failure("Note not found");
       };
       case (?noteToUpdate) {
         if (
@@ -268,7 +281,12 @@ actor {
           noteToUpdate.title := title;
           noteToUpdate.content := content;
           noteToUpdate.category := category;
+
+          return #Success;
         };
+
+        return #Failure("You do not have the permission to update this note");
+
       };
     };
   };
@@ -289,7 +307,7 @@ actor {
 
   // Delete
 
-  public shared (msg) func deleteNote(id : Nat) : async () {
+  public shared (msg) func deleteNote(id : Nat) : async OperationResult {
     removeNoteFromBuffer(msg.caller, id, null);
   };
 
@@ -336,7 +354,7 @@ actor {
     };
   };
 
-  public shared (msg) func shareNote(noteId : Nat, shareId : Nat, accessLevel : AccessLevel) : async () {
+  public shared (msg) func shareNote(noteId : Nat, shareId : Nat, accessLevel : AccessLevel) : async OperationResult {
     var principalOpt = shareIdToPrincipal.get(shareId);
 
     if (principalOpt == null) {
@@ -346,14 +364,14 @@ actor {
 
     switch (principalOpt) {
       case (null) {
-        return;
+        return #Failure("Share ID not found");
       };
       case (?sharedWith) {
         let note : ?Note = getInternalNote(msg.caller, noteId);
 
         switch (note) {
           case (null) {
-            return;
+            return #Failure("Only the owner can share this note");
           };
           case (?noteToShare) {
             let newAccess : SharedNoteAccess = {
@@ -363,13 +381,15 @@ actor {
             noteToShare.sharedAccess.add(newAccess);
 
             addNoteToBuffer(sharedWith, noteToShare);
+
+            return #Success;
           };
         };
       };
     };
   };
 
-  public shared (msg) func unshareNote(noteId : Nat, shareId : Nat) : async () {
+  public shared (msg) func unshareNote(noteId : Nat, shareId : Nat) : async OperationResult {
     var principalOpt = shareIdToPrincipal.get(shareId);
 
     if (principalOpt == null) {
@@ -379,14 +399,14 @@ actor {
 
     switch (principalOpt) {
       case (null) {
-        return;
+        return #Failure("Share ID not found");
       };
       case (?sharedWith) {
         let note : ?Note = getInternalNote(msg.caller, noteId);
 
         switch (note) {
           case (null) {
-            return;
+            return #Failure("Only the owner can share this note");
           };
           case (?noteToUnshare) {
             let updatedSharedAccess = Array.filter<SharedNoteAccess>(

@@ -1,6 +1,8 @@
-<svg width="41" height="36" viewBox="0 0 41 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M16.229 21.75L16.229 17.25" stroke="#FF0000" stroke-width="3" stroke-linecap="round"/>
-<path d="M24.771 21.75L24.771 17.25" stroke="#FF0000" stroke-width="3" stroke-linecap="round"/>
-<path d="M5.125 9.75H35.875H33.8958C32.0102 9.75 31.0674 9.75 30.4816 10.3358C29.8958 10.9216 29.8958 11.8644 29.8958 13.75V25.25C29.8958 27.1356 29.8958 28.0784 29.31 28.6642C28.7243 29.25 27.7815 29.25 25.8958 29.25H15.1042C13.2185 29.25 12.2757 29.25 11.69 28.6642C11.1042 28.0784 11.1042 27.1356 11.1042 25.25V13.75C11.1042 11.8644 11.1042 10.9216 10.5184 10.3358C9.93259 9.75 8.98978 9.75 7.10417 9.75H5.125Z" stroke="#FF0000" stroke-width="2" stroke-linecap="round"/>
-<path d="M16.2293 5.25036C16.2293 5.25036 17.0835 3.75 20.5002 3.75C23.9168 3.75 24.771 5.25 24.771 5.25" stroke="#FF0000" stroke-width="2" stroke-linecap="round"/>
+<?xml version="1.0" encoding="utf-8"?><!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+<svg width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M10 12V17" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M14 12V17" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M4 7H20" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M6 10V18C6 19.6569 7.34315 21 9 21H15C16.6569 21 18 19.6569 18 18V10" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M9 5C9 3.89543 9.89543 3 11 3H13C14.1046 3 15 3.89543 15 5V7H9V5Z" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>

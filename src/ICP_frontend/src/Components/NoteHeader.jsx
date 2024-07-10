@@ -1,21 +1,31 @@
-import backIcon from "../assets/img/back.svg";
-import shareIcon from "../assets/img/share.svg";
-import saveIcon from "../assets/img/save.svg";
-import trashIcon from "../assets/img/trash.svg";
-import RenamableText from "./RenamableText";
 import CategorySelector from "./CategorySelector";
-import { useAuth } from "../AuthContext";
+import shareIcon from "../assets/img/share.svg";
+import trashIcon from "../assets/img/trash.svg";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
-const notify = (msg) => {
-  toast(msg, { position: "top-center" });
-};
+import saveIcon from "../assets/img/save.svg";
+import backIcon from "../assets/img/back.svg";
+import RenamableText from "./RenamableText";
+import { useEffect, useState } from "react";
+import { useAuth } from "../AuthContext";
+import { notify } from "../util";
+import SharePopup from "./SharePopup"; // You'll need to create this component
 
 const NoteHeader = ({ note, setNote }) => {
-  const { getActor } = useAuth();
+  const { authClient, authenticated, getActor } = useAuth();
   const navigate = useNavigate();
+  const [isOwner, setIsOwner] = useState(false);
+  const [showSharePopup, setShowSharePopup] = useState(false);
+
+  useEffect(() => {
+    if (authenticated === null) return;
+
+    (async () => {
+      const identity = authClient.getIdentity();
+      const principal = identity.getPrincipal();
+      setIsOwner(JSON.stringify(principal) === JSON.stringify(note.owner));
+    })();
+  }, [note, authenticated]);
 
   return (
     <div className="top-bar">
@@ -30,7 +40,7 @@ const NoteHeader = ({ note, setNote }) => {
         </div>
       </div>
       <div className="note-details center">
-        <CategorySelector note={note} setNote={setNote} />/
+        <CategorySelector note={note} setNote={setNote} isOwner={isOwner} />/
         <h1 className="note-title">
           <RenamableText
             minLength={1}
@@ -48,17 +58,10 @@ const NoteHeader = ({ note, setNote }) => {
       </div>
       <div className="top-buttons">
         <div className="center">
-          <div className="note-btn button">
-            <img src={shareIcon} alt="" />
-            <div className="btn__name">Share</div>
-          </div>
-        </div>
-        <div className="center">
           <div
             className="note-btn button"
             onClick={async () => {
-              console.log(note.category);
-              await (
+              const res = await (
                 await getActor()
               ).updateNote(
                 note.id,
@@ -66,28 +69,52 @@ const NoteHeader = ({ note, setNote }) => {
                 note.content,
                 note.category ? note.category : []
               );
-              notify("Successfully saved!");
+              if ("Failure" in res) {
+                notify(res.Failure);
+              } else {
+                notify("Successfully saved!");
+              }
             }}
           >
             <img src={saveIcon} alt="" />
             <div className="btn__name">Save</div>
           </div>
         </div>
+        {isOwner && (
+          <>
+            <div className="center">
+              <div
+                className="note-btn button"
+                onClick={() => setShowSharePopup(true)}
+              >
+                <img src={shareIcon} alt="" />
+                <div className="btn__name">Share</div>
+              </div>
+            </div>
 
-        <div className="center">
-          <div
-            className="note-btn button"
-            onClick={async () => {
-              await (await getActor()).deleteNote(note.id);
-              navigate(`/app?canisterId=${process.env.CANISTER_ID}`);
-              notify("Successfully deleted!");
-            }}
-          >
-            <img src={trashIcon} alt="" className="trash-img" />
-            <div className="btn__name">Delete</div>
-          </div>
-        </div>
+            <div className="center">
+              <div
+                className="note-btn button"
+                onClick={async () => {
+                  const res = await (await getActor()).deleteNote(note.id);
+                  if ("Failure" in res) {
+                    notify(res.Failure);
+                  } else {
+                    notify("Successfully deleted!");
+                    navigate(`/app?canisterId=${process.env.CANISTER_ID}`);
+                  }
+                }}
+              >
+                <img src={trashIcon} alt="" className="trash-img" />
+                <div className="btn__name">Delete</div>
+              </div>
+            </div>
+          </>
+        )}
       </div>
+      {showSharePopup && (
+        <SharePopup noteId={note.id} onClose={() => setShowSharePopup(false)} />
+      )}
     </div>
   );
 };

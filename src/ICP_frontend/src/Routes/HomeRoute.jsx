@@ -20,6 +20,11 @@ function HomeRoute() {
     setNotes(userNotes);
   }
 
+  function removeNoteFromState(noteId) {
+    setAllNotes((prevNotes) => prevNotes.filter((note) => note.id !== noteId));
+    setNotes((prevNotes) => prevNotes.filter((note) => note.id !== noteId));
+  }
+
   useEffect(() => {
     if (authenticated) {
       initializeNotes();
@@ -50,6 +55,7 @@ function HomeRoute() {
                 .reverse()
             : []
         }
+        removeNoteFromState={removeNoteFromState}
       />
     </div>
   );

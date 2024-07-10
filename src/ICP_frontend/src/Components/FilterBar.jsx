@@ -10,7 +10,7 @@ function FilterBar({ allNotes, setNotes, setSearchText }) {
   const [selectedIdx, setSelectedIdx] = useState(0);
   const [categories, setCategories] = useState([]);
   const scrollContainerRef = useRef(null);
-  const { getActor } = useAuth();
+  const { authClient, getActor } = useAuth();
 
   const generateRandomHexColor = () => {
     return (
@@ -24,6 +24,7 @@ function FilterBar({ allNotes, setNotes, setSearchText }) {
   async function getCategories() {
     setCategories([
       { name: "All", color: "#ffffff", all: true },
+      { name: "Shared", color: "#000000", shared: true },
       ...(await (await getActor()).getCategories()),
     ]);
     checkScrollPosition();
@@ -59,6 +60,13 @@ function FilterBar({ allNotes, setNotes, setSearchText }) {
     }
   };
 
+  const isOwner = (note) => {
+    return (
+      JSON.stringify(note.owner) ===
+      JSON.stringify(authClient.getIdentity().getPrincipal())
+    );
+  };
+
   useEffect(() => {
     getCategories();
     window.addEventListener("resize", checkScrollPosition);
@@ -86,13 +94,14 @@ function FilterBar({ allNotes, setNotes, setSearchText }) {
                 name={category.name}
                 clr={category.color}
                 isSelected={selectedIdx === idx}
-                changable={category.all !== true}
+                changable={category.all !== true && category.shared !== true}
                 click={() => {
                   setSelectedIdx(idx);
                   setNotes(
                     allNotes.filter(
                       (note) =>
                         category.all ||
+                        (category.shared && !isOwner(note)) ||
                         (note.category.length > 0 &&
                           note.category[0].id === category.id)
                     )
