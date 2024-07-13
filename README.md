@@ -1,6 +1,6 @@
 # Inkwell
 
-DecentralNotes is a secure, decentralized note-taking application built on the Internet Computer blockchain.
+Inkwell is a secure, decentralized note-taking application built on the Internet Computer blockchain.
 
 ## Features
 
