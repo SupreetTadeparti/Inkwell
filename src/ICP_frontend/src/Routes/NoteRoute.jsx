@@ -21,7 +21,7 @@ function NoteRoute() {
     ).getNote(+searchParams.get("id"));
 
     if (targetNote.length === 0) {
-      navigate(`/app?canisterId=${process.env.CANISTER_ID}`);
+      navigate(`/app`);
       return;
     }
 
@@ -30,8 +30,7 @@ function NoteRoute() {
 
   useEffect(() => {
     if (authenticated === null) return;
-    if (authenticated === false)
-      return navigate(`/?canisterId=${process.env.CANISTER_ID}`);
+    if (authenticated === false) return navigate(`/`);
     initializeNote();
   }, [authenticated]);
 

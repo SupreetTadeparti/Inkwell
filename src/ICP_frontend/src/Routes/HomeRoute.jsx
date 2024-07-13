@@ -29,7 +29,7 @@ function HomeRoute() {
     if (authenticated) {
       initializeNotes();
     } else if (authenticated === false) {
-      navigate(`/?canisterId=${process.env.CANISTER_ID}`);
+      navigate(`/`);
     }
   }, [authenticated]);
 

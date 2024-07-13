@@ -301,6 +301,22 @@ actor {
       case (?categoryToUpdate) {
         categoryToUpdate.name := name;
         categoryToUpdate.color := color;
+
+        let notes : ?Buffer.Buffer<Note> = notesRecord.get(msg.caller);
+
+        switch (notes) {
+          case (null) {};
+          case (?noteBuffer) {
+            for (note in noteBuffer.vals()) {
+              switch (note.category) {
+                case (null) {};
+                case (?category) {
+                  note.category := ?categoryToSharedCategory(categoryToUpdate);
+                };
+              };
+            };
+          };
+        };
       };
     };
   };

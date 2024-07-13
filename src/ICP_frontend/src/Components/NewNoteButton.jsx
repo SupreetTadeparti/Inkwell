@@ -10,7 +10,7 @@ function NewNoteButton() {
       className="new-note-btn button glass"
       onClick={async () => {
         const noteId = await (await getActor()).createNote("New Note", "", []);
-        navigate(`/note?canisterId=${process.env.CANISTER_ID}&id=${noteId}`);
+        navigate(`/note?id=${noteId}`);
       }}
     >
       +

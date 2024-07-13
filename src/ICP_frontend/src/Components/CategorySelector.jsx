@@ -64,8 +64,7 @@ const CategorySelector = ({ note, setNote, isOwner }) => {
   useEffect(() => {
     if (authenticated === null) return;
 
-    if (authenticated === false)
-      return navigate(`/?canisterId=${process.env.CANISTER_ID}`);
+    if (authenticated === false) return navigate(`/`);
 
     (async () => {
       try {

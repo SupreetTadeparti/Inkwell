@@ -33,7 +33,7 @@ const NoteHeader = ({ note, setNote }) => {
         <div
           className="back-btn button"
           onClick={() => {
-            navigate(`/app?canisterId=${process.env.CANISTER_ID}`);
+            navigate(`/app`);
           }}
         >
           <img src={backIcon} alt="back icon" className="back-icon" />
@@ -44,7 +44,7 @@ const NoteHeader = ({ note, setNote }) => {
         <h1 className="note-title">
           <RenamableText
             minLength={1}
-            maxLength={15}
+            maxLength={18}
             content={note.title}
             onSave={async (title) => {
               if (note.id === null) return;
@@ -101,7 +101,7 @@ const NoteHeader = ({ note, setNote }) => {
                     notify(res.Failure);
                   } else {
                     notify("Successfully deleted!");
-                    navigate(`/app?canisterId=${process.env.CANISTER_ID}`);
+                    navigate(`/app`);
                   }
                 }}
               >

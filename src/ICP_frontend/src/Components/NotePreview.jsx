@@ -41,7 +41,7 @@ function NotePreview({ note, removeNoteFromState }) {
             : "#ffffff",
         }}
         onClick={() => {
-          navigate(`/note?canisterId=${process.env.CANISTER_ID}&id=${id}`);
+          navigate(`/note?id=${id}`);
         }}
       >
         <div className="note-preview__title">{title}</div>

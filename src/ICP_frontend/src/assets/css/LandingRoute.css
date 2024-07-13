@@ -188,7 +188,7 @@
 
 .section-content {
   margin-left: auto;
-  height: 20em;
+  min-height: 20em;
   position: relative;
   z-index: 1;
   display: flex;

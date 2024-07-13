@@ -126,3 +126,24 @@ input {
 .share-popup-buttons button:hover {
   background-position: right center; /* change the direction of the change here */
 }
+
+#small-screen-size {
+  display: none;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  height: 100dvh;
+  padding: 2em;
+  font-size: 3em;
+  text-align: center;
+}
+
+@media (max-width: 900px) {
+  #root {
+    display: none;
+  }
+
+  #small-screen-size {
+    display: flex;
+  }
+}
